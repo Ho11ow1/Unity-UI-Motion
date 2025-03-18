@@ -1,0 +1,14 @@
+{
+  "name": "com.hollow1.unity-ui-motion",
+  "version": "1.0.0",
+  "displayName": "Unity UI Motion",
+  "description": "A lightweight and flexible UI animation system for Unity",
+  "unity": "2022.3",
+  "author": {
+    "name": "Hollow1",
+    "url": "https://github.com/Ho11ow1"
+  },
+  "dependencies": {
+    "com.unity.textmeshpro": "2.0.1"
+  }
+}
