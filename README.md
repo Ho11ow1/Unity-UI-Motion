@@ -18,7 +18,7 @@ A lightweight and flexible UI animation system for Unity that provides smooth tr
 
 ### Option 1: Manual Installation
 1. Download the `Fade.cs` and `Transition.cs` scripts from this repository
-2. Add it to your Unity project's Assets folder
+2. Add them to your Unity project's Assets folder
 3. Ensure your UI element has a CanvasGroup component attached(`Fade.cs`)
 
 ### Option 2: Unity Package Manager
