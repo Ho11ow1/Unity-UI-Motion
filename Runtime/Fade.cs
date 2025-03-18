@@ -87,7 +87,7 @@ public class Fade : MonoBehaviour
         canvasGroup.alpha = visible;
     }
 
-    public IEnumerator FadeUiOut(float delay, float duration)
+    private IEnumerator FadeUiOut(float delay, float duration)
     {
         float elapsedTime = 0f;
         canvasGroup.alpha = visible;
