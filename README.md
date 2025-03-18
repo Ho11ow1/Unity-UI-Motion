@@ -24,7 +24,7 @@ A lightweight and flexible UI animation system for Unity that provides smooth tr
 ### Option 2: Unity Package Manager
 1. In Unity, go to Window > Package Manager
 2. Click the + button and select "Add package from git URL..."
-3. Enter: https://github.com/Ho11ow1/Unity-UI-Motion.git
+3. Enter: ```https://github.com/Ho11ow1/Unity-UI-Motion.git```
 
 ## Quick Start
 
