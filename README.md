@@ -7,12 +7,18 @@ A lightweight and flexible UI animation system for Unity that provides smooth tr
 - **Fade Animations**
   - Smooth fade in/out transitions
   - Customizable duration and delay
+  - Instant visibility toggling
   - Zero-configuration setup with CanvasGroup
 
 - **Position Transitions** 
-  - Support for all 4 directions (Up, Down, Left, Right)
+  - Support for all 4 directions (Up, Down, Left, Right) + diagonal
   - Multiple easing functions
-  - Works with Text, Images and Panels
+  - Flexible component targeting
+  - Customization options:
+    - Configurable offset distance
+    - Adjustable animation duration
+    - Optional animation delay
+    - Custom position vectors
 
 ## Installation
 
@@ -50,10 +56,10 @@ var transition = GetComponent<Transition>();
 // Slide in from right to left
 transition.TransitionLeft(target: Transition.TransitionTarget.Text, offset: 100f);
 
-// Slide up with custom parameters
-transition.TransitionUp(
+// Diagonal slide in from bottom right
+transition.TransitionPosition(
     target: Transition.TransitionTarget.Text,
-    offset: 50f,
+    offset: new Vector2(2, -2),
     easing: EasingType.EaseInOut,
     duration: 0.3f,
     delay: 0.5f

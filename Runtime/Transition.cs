@@ -13,7 +13,7 @@ using TMPro;
  * position transitions on Unity UI elements with support
  * for multiple easing functions and directions.
  * 
- * Version: 1.0.0
+ * Version: 1.1.0
  * GitHub: https://github.com/Hollow1/Unity-UI-Motion
  * -------------------------------------------------------- */
 public class Transition : MonoBehaviour
@@ -70,7 +70,7 @@ public class Transition : MonoBehaviour
     /// Transitions the UI element up using the default duration with delay
     /// </summary>
     /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
-    /// <param name="offset">Offset in pixels (or units depending on canvas scaling). Positive values move the element down by this amount before animating to its final position.</param>
+    /// <param name="offset">Offset in pixels (or units depending on canvas scaling). Positive values move the element down by this amount before animating to its original position.</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
@@ -79,18 +79,18 @@ public class Transition : MonoBehaviour
         switch (target)
         {
             case TransitionTarget.Text:
-                StartCoroutine(TextTransitionUp(offset, duration, delay, easing));
+                StartCoroutine(TextTransition(new Vector2(0, offset), duration, delay, easing));
                 break;
             case TransitionTarget.Image:
-                StartCoroutine(ImageTransitionUp(offset, duration, delay, easing));
+                StartCoroutine(ImageTransition(new Vector2(0, offset), duration, delay, easing));
                 break;
             case TransitionTarget.Panel:
-                StartCoroutine(PanelTransitionUp(offset, duration, delay, easing));
+                StartCoroutine(PanelTransition(new Vector2(0, offset), duration, delay, easing));
                 break;
             case TransitionTarget.All:
-                StartCoroutine(TextTransitionUp(offset, duration, delay, easing));
-                StartCoroutine(ImageTransitionUp(offset, duration, delay, easing));
-                StartCoroutine(PanelTransitionUp(offset, duration, delay, easing));
+                StartCoroutine(TextTransition(new Vector2(0, offset), duration, delay, easing));
+                StartCoroutine(ImageTransition(new Vector2(0, offset), duration, delay, easing));
+                StartCoroutine(PanelTransition(new Vector2(0, offset), duration, delay, easing));
                 break;
         }
     }
@@ -99,7 +99,7 @@ public class Transition : MonoBehaviour
     /// Transitions the UI element down using the default duration with delay
     /// </summary>
     /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
-    /// <param name="offset">Offset in pixels (or units depending on canvas scaling). Positive values move the element up by this amount before animating to its final position.</param>
+    /// <param name="offset">Offset in pixels (or units depending on canvas scaling). Positive values move the element up by this amount before animating to its original position.</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
@@ -108,18 +108,18 @@ public class Transition : MonoBehaviour
         switch (target)
         {
             case TransitionTarget.Text:
-                StartCoroutine(TextTransitionDown(offset, duration, delay, easing));
+                StartCoroutine(TextTransition(new Vector2(0, -offset), duration, delay, easing));
                 break;
             case TransitionTarget.Image:
-                StartCoroutine(ImageTransitionDown(offset, duration, delay, easing));
+                StartCoroutine(ImageTransition(new Vector2(0, -offset), duration, delay, easing));
                 break;
             case TransitionTarget.Panel:
-                StartCoroutine(PanelTransitionDown(offset, duration, delay, easing));
+                StartCoroutine(PanelTransition(new Vector2(0, -offset), duration, delay, easing));
                 break;
             case TransitionTarget.All:
-                StartCoroutine(TextTransitionDown(offset, duration, delay, easing));
-                StartCoroutine(ImageTransitionDown(offset, duration, delay, easing));
-                StartCoroutine(PanelTransitionDown(offset, duration, delay, easing));
+                StartCoroutine(TextTransition(new Vector2(0, -offset), duration, delay, easing));
+                StartCoroutine(ImageTransition(new Vector2(0, -offset), duration, delay, easing));
+                StartCoroutine(PanelTransition(new Vector2(0, -offset), duration, delay, easing));
                 break;
         }
     }
@@ -128,7 +128,7 @@ public class Transition : MonoBehaviour
     /// Transitions the UI element from right to left using the default duration with delay
     /// </summary>
     /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
-    /// <param name="offset">Offset in pixels (or units depending on canvas scaling). Positive values move the element to the right by this amount before animating to its final position.</param>
+    /// <param name="offset">Offset in pixels (or units depending on canvas scaling). Positive values move the element to the right by this amount before animating to its original position.</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
@@ -137,18 +137,18 @@ public class Transition : MonoBehaviour
         switch (target)
         {
             case TransitionTarget.Text:
-                StartCoroutine(TextTransitionLeft(offset, duration, delay, easing));
+                StartCoroutine(TextTransition(new Vector2(-offset, 0), duration, delay, easing));
                 break;
             case TransitionTarget.Image:
-                StartCoroutine(ImageTransitionLeft(offset, duration, delay, easing));
+                StartCoroutine(ImageTransition(new Vector2(-offset, 0), duration, delay, easing));
                 break;
             case TransitionTarget.Panel:
-                StartCoroutine(PanelTransitionLeft(offset, duration, delay, easing));
+                StartCoroutine(PanelTransition(new Vector2(-offset, 0), duration, delay, easing));
                 break;
             case TransitionTarget.All:
-                StartCoroutine(TextTransitionLeft(offset, duration, delay, easing));
-                StartCoroutine(ImageTransitionLeft(offset, duration, delay, easing));
-                StartCoroutine(PanelTransitionLeft(offset, duration, delay, easing));
+                StartCoroutine(TextTransition(new Vector2(-offset, 0), duration, delay, easing));
+                StartCoroutine(ImageTransition(new Vector2(-offset, 0), duration, delay, easing));
+                StartCoroutine(PanelTransition(new Vector2(-offset, 0), duration, delay, easing));
                 break;
         }
     }
@@ -157,7 +157,7 @@ public class Transition : MonoBehaviour
     /// Transitions the UI element from left to right using the default duration with delay
     /// </summary>
     /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
-    /// <param name="offset">Offset in pixels (or units depending on canvas scaling). Positive values move the element to the left by this amount before animating to its final position.</param>
+    /// <param name="offset">Offset in pixels (or units depending on canvas scaling). Positive values move the element to the left by this amount before animating to its original position.</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
@@ -166,100 +166,60 @@ public class Transition : MonoBehaviour
         switch (target)
         {
             case TransitionTarget.Text:
-                StartCoroutine(TextTransitionRight(offset, duration, delay, easing));
+                StartCoroutine(TextTransition(new Vector2(offset, 0), duration, delay, easing));
                 break;
             case TransitionTarget.Image:
-                StartCoroutine(ImageTransitionRight(offset, duration, delay, easing));
+                StartCoroutine(ImageTransition(new Vector2(offset, 0), duration, delay, easing));
                 break;
             case TransitionTarget.Panel:
-                StartCoroutine(PanelTransitionRight(offset, duration, delay, easing));
+                StartCoroutine(PanelTransition(new Vector2(offset, 0), duration, delay, easing));
                 break;
             case TransitionTarget.All:
-                StartCoroutine(TextTransitionRight(offset, duration, delay, easing));
-                StartCoroutine(ImageTransitionRight(offset, duration, delay, easing));
-                StartCoroutine(PanelTransitionRight(offset, duration, delay, easing));
+                StartCoroutine(TextTransition(new Vector2(offset, 0), duration, delay, easing));
+                StartCoroutine(ImageTransition(new Vector2(offset, 0), duration, delay, easing));
+                StartCoroutine(PanelTransition(new Vector2(offset, 0), duration, delay, easing));
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Transitions the UI element on both axis based on the offset
+    /// </summary>
+    /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
+    /// <param name="offset">Offset in pixels (or units depending on canvas scaling). Positive values move the element to the right and up by this amount before animating to its original position.</param>
+    /// <param name="easing">Specifies the easing method the transition should use</param>
+    /// <param name="duration">Time in seconds for the transition duration</param>
+    /// <param name="delay">Time in seconds to wait before starting the transition</param>
+    public void TransitionPosition(TransitionTarget target, Vector2 offset, EasingType easing = EasingType.Linear, float duration = transitionTime, float delay = 0f)
+    {
+        switch (target)
+        {
+            case TransitionTarget.Text:
+                StartCoroutine(TextTransition(-offset, duration, delay, easing));
+                break;
+            case TransitionTarget.Image:
+                StartCoroutine(ImageTransition(-offset, duration, delay, easing));
+                break;
+            case TransitionTarget.Panel:
+                StartCoroutine(PanelTransition(-offset, duration, delay, easing));
+                break;
+            case TransitionTarget.All:
+                StartCoroutine(TextTransition(-offset, duration, delay, easing));
+                StartCoroutine(ImageTransition(-offset, duration, delay, easing));
+                StartCoroutine(PanelTransition(-offset, duration, delay, easing));
                 break;
         }
     }
 
     // ----------------------------------------------------- TEXT BASED TRANSITIONS -----------------------------------------------------
 
-    private IEnumerator TextTransitionUp(float offset, float duration, float delay, EasingType easing)
+    private IEnumerator TextTransition(Vector2 offset, float duration, float delay, EasingType easing)
     {
         if (textComponent == null) { yield break; }
 
         float elapsedTime = 0f;
         targetPos = textComponent.rectTransform.anchoredPosition;
-        startPos = new Vector2(targetPos.x, targetPos.y - offset);
-        textComponent.rectTransform.anchoredPosition = startPos;
-        if (delay > 0) { yield return new WaitForSeconds(delay); }
-
-        while (elapsedTime < duration)
-        {
-            float t = elapsedTime / duration;
-            float easedT = SetEasingFunction(t, easing);
-
-            textComponent.rectTransform.anchoredPosition = Vector2.Lerp(startPos, targetPos, easedT);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        textComponent.rectTransform.anchoredPosition = targetPos;
-    }
-
-    private IEnumerator TextTransitionDown(float offset, float duration, float delay, EasingType easing)
-    {
-        if (textComponent == null) { yield break; }
-
-        float elapsedTime = 0f;
-        targetPos = textComponent.rectTransform.anchoredPosition;
-        startPos = new Vector2(targetPos.x, targetPos.y + offset);
-        textComponent.rectTransform.anchoredPosition = startPos;
-        if (delay > 0) { yield return new WaitForSeconds(delay); }
-
-        while (elapsedTime < duration)
-        {
-            float time = elapsedTime / duration;
-            float easedTime = SetEasingFunction(time, easing);
-
-            textComponent.rectTransform.anchoredPosition = Vector2.Lerp(startPos, targetPos, easedTime);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        textComponent.rectTransform.anchoredPosition = targetPos;
-    }
-
-    private IEnumerator TextTransitionLeft(float offset, float duration, float delay, EasingType easing)
-    {
-        if (textComponent == null) { yield break; }
-
-        float elapsedTime = 0f;
-        targetPos = textComponent.rectTransform.anchoredPosition;
-        startPos = new Vector2(targetPos.x + offset, targetPos.y);
-        textComponent.rectTransform.anchoredPosition = startPos;
-        if (delay > 0) { yield return new WaitForSeconds(delay); }
-
-        while (elapsedTime < duration)
-        {
-            float time = elapsedTime / duration;
-            float easedTime = SetEasingFunction(time, easing);
-
-            textComponent.rectTransform.anchoredPosition = Vector2.Lerp(startPos, targetPos, easedTime);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        textComponent.rectTransform.anchoredPosition = targetPos;
-    }
-
-    private IEnumerator TextTransitionRight(float offset, float duration, float delay, EasingType easing)
-    {
-        if (textComponent == null) { yield break; }
-
-        float elapsedTime = 0f;
-        targetPos = textComponent.rectTransform.anchoredPosition;
-        startPos = new Vector2(targetPos.x - offset, targetPos.y);
+        startPos = targetPos - offset;
         textComponent.rectTransform.anchoredPosition = startPos;
         if (delay > 0) { yield return new WaitForSeconds(delay); }
 
@@ -278,82 +238,13 @@ public class Transition : MonoBehaviour
 
     // ----------------------------------------------------- IMAGE BASED TRANSITIONS -----------------------------------------------------
 
-    private IEnumerator ImageTransitionUp(float offset, float duration, float delay, EasingType easing)
+    private IEnumerator ImageTransition(Vector2 offset, float duration, float delay, EasingType easing)
     {
         if (imageComponent == null) { yield break; }
 
         float elapsedTime = 0f;
         targetPos = imageComponent.rectTransform.anchoredPosition;
-        startPos = new Vector2(targetPos.x, targetPos.y - offset);
-        imageComponent.rectTransform.anchoredPosition = startPos;
-        if (delay > 0) { yield return new WaitForSeconds(delay); }
-
-        while (elapsedTime < duration)
-        {
-            float time = elapsedTime / duration;
-            float easedTime = SetEasingFunction(time, easing);
-
-            imageComponent.rectTransform.anchoredPosition = Vector2.Lerp(startPos, targetPos, easedTime);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        imageComponent.rectTransform.anchoredPosition = targetPos;
-    }
-
-    private IEnumerator ImageTransitionDown(float offset, float duration, float delay, EasingType easing)
-    {
-        if (imageComponent == null) { yield break; }
-
-        float elapsedTime = 0f;
-        targetPos = imageComponent.rectTransform.anchoredPosition;
-        startPos = new Vector2(targetPos.x, targetPos.y + offset);
-        imageComponent.rectTransform.anchoredPosition = startPos;
-        if (delay > 0) { yield return new WaitForSeconds(delay); }
-
-        while (elapsedTime < duration)
-        {
-            float time = elapsedTime / duration;
-            float easedTime = SetEasingFunction(time, easing);
-
-            imageComponent.rectTransform.anchoredPosition = Vector2.Lerp(startPos, targetPos, easedTime);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        imageComponent.rectTransform.anchoredPosition = targetPos;
-    }
-
-    private IEnumerator ImageTransitionLeft(float offset, float duration, float delay, EasingType easing)
-    {
-        if (imageComponent == null) { yield break; }
-
-        float elapsedTime = 0f;
-        targetPos = imageComponent.rectTransform.anchoredPosition;
-        startPos = new Vector2(targetPos.x + offset, targetPos.y);
-        imageComponent.rectTransform.anchoredPosition = startPos;
-        if (delay > 0) { yield return new WaitForSeconds(delay); }
-
-        while (elapsedTime < duration)
-        {
-            float time = elapsedTime / duration;
-            float easedTime = SetEasingFunction(time, easing);
-
-            imageComponent.rectTransform.anchoredPosition = Vector2.Lerp(startPos, targetPos, easedTime);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        imageComponent.rectTransform.anchoredPosition = targetPos;
-    }
-
-    private IEnumerator ImageTransitionRight(float offset, float duration, float delay, EasingType easing)
-    {
-        if (imageComponent == null) { yield break; }
-
-        float elapsedTime = 0f;
-        targetPos = imageComponent.rectTransform.anchoredPosition;
-        startPos = new Vector2(targetPos.x - offset, targetPos.y);
+        startPos = targetPos - offset;
         imageComponent.rectTransform.anchoredPosition = startPos;
         if (delay > 0) { yield return new WaitForSeconds(delay); }
 
@@ -372,82 +263,13 @@ public class Transition : MonoBehaviour
 
     // ----------------------------------------------------- PANEL BASED TRANSITIONS -----------------------------------------------------
 
-    private IEnumerator PanelTransitionUp(float offset, float duration, float delay, EasingType easing)
+    private IEnumerator PanelTransition(Vector2 offset, float duration, float delay, EasingType easing)
     {
         if (panelTransform == null) { yield break; }
 
         float elapsedTime = 0f;
         targetPos = panelTransform.anchoredPosition;
-        startPos = new Vector2(targetPos.x, targetPos.y - offset);
-        panelTransform.anchoredPosition = startPos;
-        if (delay > 0) { yield return new WaitForSeconds(delay); }
-
-        while (elapsedTime < duration)
-        {
-            float time = elapsedTime / duration;
-            float easedTime = SetEasingFunction(time, easing);
-
-            panelTransform.anchoredPosition = Vector2.Lerp(startPos, targetPos, easedTime);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        panelTransform.anchoredPosition = targetPos;
-    }
-
-    private IEnumerator PanelTransitionDown(float offset, float duration, float delay, EasingType easing)
-    {
-        if (panelTransform == null) { yield break; }
-
-        float elapsedTime = 0f;
-        targetPos = panelTransform.anchoredPosition;
-        startPos = new Vector2(targetPos.x, targetPos.y + offset);
-        panelTransform.anchoredPosition = startPos;
-        if (delay > 0) { yield return new WaitForSeconds(delay); }
-
-        while (elapsedTime < duration)
-        {
-            float time = elapsedTime / duration;
-            float easedTime = SetEasingFunction(time, easing);
-
-            panelTransform.anchoredPosition = Vector2.Lerp(startPos, targetPos, easedTime);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        panelTransform.anchoredPosition = targetPos;
-    }
-
-    private IEnumerator PanelTransitionLeft(float offset, float duration, float delay, EasingType easing)
-    {
-        if (panelTransform == null) { yield break; }
-
-        float elapsedTime = 0f;
-        targetPos = panelTransform.anchoredPosition;
-        startPos = new Vector2(targetPos.x + offset, targetPos.y);
-        panelTransform.anchoredPosition = startPos;
-        if (delay > 0) { yield return new WaitForSeconds(delay); }
-
-        while (elapsedTime < duration)
-        {
-            float time = elapsedTime / duration;
-            float easedTime = SetEasingFunction(time, easing);
-
-            panelTransform.anchoredPosition = Vector2.Lerp(startPos, targetPos, easedTime);
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        panelTransform.anchoredPosition = targetPos;
-    }
-
-    private IEnumerator PanelTransitionRight(float offset, float duration, float delay, EasingType easing)
-    {
-        if (panelTransform == null) { yield break; }
-
-        float elapsedTime = 0f;
-        targetPos = panelTransform.anchoredPosition;
-        startPos = new Vector2(targetPos.x - offset, targetPos.y);
+        startPos = targetPos - offset;
         panelTransform.anchoredPosition = startPos;
         if (delay > 0) { yield return new WaitForSeconds(delay); }
 

@@ -9,7 +9,7 @@ using UnityEngine;
  * fade transitions on Unity UI elements with support for
  * custom durations and delays.
  * 
- * Version: 1.0.0
+ * Version: 1.1.0
  * GitHub: https://github.com/Hollow1/Unity-UI-Motion
  * -------------------------------------------------------- */
 public class Fade : MonoBehaviour
