@@ -9,10 +9,13 @@ using UnityEngine;
  * fade transitions on Unity UI elements with support for
  * custom durations and delays.
  * 
- * Version: 1.1.0
+ * Version: 2.0.0
  * GitHub: https://github.com/Hollow1/Unity-UI-Motion
  * -------------------------------------------------------- */
-public class Fade : MonoBehaviour
+
+[AddComponentMenu("")]
+[RequireComponent(typeof(Motion))]
+internal class Fade : MonoBehaviour
 {
     private CanvasGroup canvasGroup;
 
@@ -20,12 +23,13 @@ public class Fade : MonoBehaviour
     private const float visible = 1.0f;
     private const float fadeDuration = 0.5f;
 
-    void Start()
+    void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
         if (canvasGroup == null)
         {
-            Debug.LogWarning($"[{gameObject.name}] No CanvasGroup component found");
+            canvasGroup = gameObject.AddComponent<CanvasGroup>();
+            Debug.LogWarning($"[{gameObject.name}] No CanvasGroup component found, added automatically.");
         }
     }
 
@@ -73,6 +77,8 @@ public class Fade : MonoBehaviour
 
     private IEnumerator FadeUiIn(float delay, float duration)
     {
+        if (canvasGroup == null) { yield break; }
+
         float elapsedTime = 0f;
         canvasGroup.alpha = transparent;
         if (delay > 0) { yield return new WaitForSeconds(delay); }
@@ -89,6 +95,8 @@ public class Fade : MonoBehaviour
 
     private IEnumerator FadeUiOut(float delay, float duration)
     {
+        if (canvasGroup == null) { yield break; }
+
         float elapsedTime = 0f;
         canvasGroup.alpha = visible;
         if (delay > 0) { yield return new WaitForSeconds(delay); }

@@ -34,33 +34,18 @@ A lightweight and flexible UI animation system for Unity that provides smooth tr
 
 ## Quick Start
 
-### Fade Animations
-
 ```csharp
-// Get the Fade component from your UI element
-var fade = GetComponent<Fade>();
+// Get the Motion component from your UI element
+var element = GetComponent<Motion>();
 
-// Fade in with default duration (0.5s)
-fade.FadeIn();
+// Fade in the element with standard duration
+element.FadeIn();
 
-// Fade out with custom duration and delay
-fade.FadeOut(delay: 1.0f, duration: 0.3f);
-```
-
-### Position Transitions
-
-```csharp
-// Get the Transition component from your UI element
-var transition = GetComponent<Transition>();
-
-// Slide in from right to left
-transition.TransitionLeft(target: Transition.TransitionTarget.Text, offset: 100f);
-
-// Diagonal slide in from bottom right
-transition.TransitionPosition(
-    target: Transition.TransitionTarget.Text,
+// Slide in from bottom right
+element.TransitionPosition(
+    target: Motion.TransitionTarget.Text,
     offset: new Vector2(2, -2),
-    easing: EasingType.EaseInOut,
+    easing: Motion.EasingType.EaseInOut,
     duration: 0.3f,
     delay: 0.5f
 );
