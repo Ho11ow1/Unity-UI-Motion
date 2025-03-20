@@ -79,7 +79,7 @@ animation.Rotate(Motion.TransitionTarget.Image, 30);
 ### Integration Example
 
 ```csharp
-public class Popup : MonoBehaviour
+public class PopupManager : MonoBehaviour
 {
     [SerializeField] GameObject panel;
     private Motion panelMotion;
@@ -87,6 +87,7 @@ public class Popup : MonoBehaviour
     void Awake()
     {
         panelMotion = panel.GetComponent<Motion>();
+
         panel.SetActive(true); // Make sure the Ui panel is active
         panelMotion.TurnInvisible(); // Start invisible
     }
@@ -94,7 +95,7 @@ public class Popup : MonoBehaviour
     public void ShowPopup()
     {
         panelMotion.FadeIn(0, 0.75f);
-        panelMotion.TransitionRight(Motion.TransitionTarget.Panel, 10, Motion.EasingType.EaseIn);
+        panelMotion.TransitionRight(Motion.TransitionTarget.Panel, 100, Motion.EasingType.EaseIn);
     }
 
     public void HidePopup() 
