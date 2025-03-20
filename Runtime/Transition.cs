@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using UnityEngine.UI;
 using TMPro;
 
@@ -18,36 +17,21 @@ using TMPro;
  * -------------------------------------------------------- */
 
 [AddComponentMenu("")]
-[RequireComponent(typeof(Motion))]
-internal class Transition : MonoBehaviour
+internal class Transition
 {
-    private TextMeshProUGUI textComponent;
-    private Image imageComponent;
-    private RectTransform panelTransform;
+    private readonly TextMeshProUGUI textComponent;
+    private readonly Image imageComponent;
+    private readonly RectTransform panelTransform;
+    private readonly MonoBehaviour monoBehaviour;
 
-    private Vector2 startPos;
-    private Vector2 targetPos;
     private const float transitionTime = 0.5f;
 
-    void Awake()
+    public Transition(TextMeshProUGUI text, Image image, RectTransform panel, MonoBehaviour runner)
     {
-        textComponent = GetComponentInChildren<TextMeshProUGUI>();
-        if (textComponent == null)
-        {
-            Debug.LogWarning($"[{gameObject.name}] No Text component found in children. Parent: [{transform.parent.name ?? "none"}]");
-        }
-
-        imageComponent = GetComponentsInChildren<Image>().FirstOrDefault((img) => img.gameObject != gameObject);
-        if (imageComponent == null)
-        {
-            Debug.LogWarning($"[{gameObject.name}] No Image component found in children. Parent: [{transform.parent.name ?? "none"}]");
-        }
-
-        panelTransform = GetComponent<RectTransform>();
-        if (panelTransform == null)
-        {
-            Debug.LogWarning($"[{gameObject.name}] No RectTransform component found.");
-        }
+        textComponent = text;
+        imageComponent = image;
+        panelTransform = panel;
+        monoBehaviour = runner;
     }
 
     // ----------------------------------------------------- PUBLIC API -----------------------------------------------------
@@ -65,18 +49,18 @@ internal class Transition : MonoBehaviour
         switch (target)
         {
             case Motion.TransitionTarget.Text:
-                StartCoroutine(TextTransition(new Vector2(0, offset), duration, delay, easing));
+                monoBehaviour.StartCoroutine(TextTransition(new Vector2(0, offset), duration, delay, easing));
                 break;
             case Motion.TransitionTarget.Image:
-                StartCoroutine(ImageTransition(new Vector2(0, offset), duration, delay, easing));
+                monoBehaviour.StartCoroutine(ImageTransition(new Vector2(0, offset), duration, delay, easing));
                 break;
             case Motion.TransitionTarget.Panel:
-                StartCoroutine(PanelTransition(new Vector2(0, offset), duration, delay, easing));
+                monoBehaviour.StartCoroutine(PanelTransition(new Vector2(0, offset), duration, delay, easing));
                 break;
             case Motion.TransitionTarget.All:
-                StartCoroutine(TextTransition(new Vector2(0, offset), duration, delay, easing));
-                StartCoroutine(ImageTransition(new Vector2(0, offset), duration, delay, easing));
-                StartCoroutine(PanelTransition(new Vector2(0, offset), duration, delay, easing));
+                monoBehaviour.StartCoroutine(TextTransition(new Vector2(0, offset), duration, delay, easing));
+                monoBehaviour.StartCoroutine(ImageTransition(new Vector2(0, offset), duration, delay, easing));
+                monoBehaviour.StartCoroutine(PanelTransition(new Vector2(0, offset), duration, delay, easing));
                 break;
         }
     }
@@ -94,18 +78,18 @@ internal class Transition : MonoBehaviour
         switch (target)
         {
             case Motion.TransitionTarget.Text:
-                StartCoroutine(TextTransition(new Vector2(0, -offset), duration, delay, easing));
+                monoBehaviour.StartCoroutine(TextTransition(new Vector2(0, -offset), duration, delay, easing));
                 break;
             case Motion.TransitionTarget.Image:
-                StartCoroutine(ImageTransition(new Vector2(0, -offset), duration, delay, easing));
+                monoBehaviour.StartCoroutine(ImageTransition(new Vector2(0, -offset), duration, delay, easing));
                 break;
             case Motion.TransitionTarget.Panel:
-                StartCoroutine(PanelTransition(new Vector2(0, -offset), duration, delay, easing));
+                monoBehaviour.StartCoroutine(PanelTransition(new Vector2(0, -offset), duration, delay, easing));
                 break;
             case Motion.TransitionTarget.All:
-                StartCoroutine(TextTransition(new Vector2(0, -offset), duration, delay, easing));
-                StartCoroutine(ImageTransition(new Vector2(0, -offset), duration, delay, easing));
-                StartCoroutine(PanelTransition(new Vector2(0, -offset), duration, delay, easing));
+                monoBehaviour.StartCoroutine(TextTransition(new Vector2(0, -offset), duration, delay, easing));
+                monoBehaviour.StartCoroutine(ImageTransition(new Vector2(0, -offset), duration, delay, easing));
+                monoBehaviour.StartCoroutine(PanelTransition(new Vector2(0, -offset), duration, delay, easing));
                 break;
         }
     }
@@ -123,18 +107,18 @@ internal class Transition : MonoBehaviour
         switch (target)
         {
             case Motion.TransitionTarget.Text:
-                StartCoroutine(TextTransition(new Vector2(-offset, 0), duration, delay, easing));
+                monoBehaviour.StartCoroutine(TextTransition(new Vector2(-offset, 0), duration, delay, easing));
                 break;
             case Motion.TransitionTarget.Image:
-                StartCoroutine(ImageTransition(new Vector2(-offset, 0), duration, delay, easing));
+                monoBehaviour.StartCoroutine(ImageTransition(new Vector2(-offset, 0), duration, delay, easing));
                 break;
             case Motion.TransitionTarget.Panel:
-                StartCoroutine(PanelTransition(new Vector2(-offset, 0), duration, delay, easing));
+                monoBehaviour.StartCoroutine(PanelTransition(new Vector2(-offset, 0), duration, delay, easing));
                 break;
             case Motion.TransitionTarget.All:
-                StartCoroutine(TextTransition(new Vector2(-offset, 0), duration, delay, easing));
-                StartCoroutine(ImageTransition(new Vector2(-offset, 0), duration, delay, easing));
-                StartCoroutine(PanelTransition(new Vector2(-offset, 0), duration, delay, easing));
+                monoBehaviour.StartCoroutine(TextTransition(new Vector2(-offset, 0), duration, delay, easing));
+                monoBehaviour.StartCoroutine(ImageTransition(new Vector2(-offset, 0), duration, delay, easing));
+                monoBehaviour.StartCoroutine(PanelTransition(new Vector2(-offset, 0), duration, delay, easing));
                 break;
         }
     }
@@ -152,18 +136,18 @@ internal class Transition : MonoBehaviour
         switch (target)
         {
             case Motion.TransitionTarget.Text:
-                StartCoroutine(TextTransition(new Vector2(offset, 0), duration, delay, easing));
+                monoBehaviour.StartCoroutine(TextTransition(new Vector2(offset, 0), duration, delay, easing));
                 break;
             case Motion.TransitionTarget.Image:
-                StartCoroutine(ImageTransition(new Vector2(offset, 0), duration, delay, easing));
+                monoBehaviour.StartCoroutine(ImageTransition(new Vector2(offset, 0), duration, delay, easing));
                 break;
             case Motion.TransitionTarget.Panel:
-                StartCoroutine(PanelTransition(new Vector2(offset, 0), duration, delay, easing));
+                monoBehaviour.StartCoroutine(PanelTransition(new Vector2(offset, 0), duration, delay, easing));
                 break;
             case Motion.TransitionTarget.All:
-                StartCoroutine(TextTransition(new Vector2(offset, 0), duration, delay, easing));
-                StartCoroutine(ImageTransition(new Vector2(offset, 0), duration, delay, easing));
-                StartCoroutine(PanelTransition(new Vector2(offset, 0), duration, delay, easing));
+                monoBehaviour.StartCoroutine(TextTransition(new Vector2(offset, 0), duration, delay, easing));
+                monoBehaviour.StartCoroutine(ImageTransition(new Vector2(offset, 0), duration, delay, easing));
+                monoBehaviour.StartCoroutine(PanelTransition(new Vector2(offset, 0), duration, delay, easing));
                 break;
         }
     }
@@ -181,18 +165,18 @@ internal class Transition : MonoBehaviour
         switch (target)
         {
             case Motion.TransitionTarget.Text:
-                StartCoroutine(TextTransition(-offset, duration, delay, easing));
+                monoBehaviour.StartCoroutine(TextTransition(-offset, duration, delay, easing));
                 break;
             case Motion.TransitionTarget.Image:
-                StartCoroutine(ImageTransition(-offset, duration, delay, easing));
+                monoBehaviour.StartCoroutine(ImageTransition(-offset, duration, delay, easing));
                 break;
             case Motion.TransitionTarget.Panel:
-                StartCoroutine(PanelTransition(-offset, duration, delay, easing));
+                monoBehaviour.StartCoroutine(PanelTransition(-offset, duration, delay, easing));
                 break;
             case Motion.TransitionTarget.All:
-                StartCoroutine(TextTransition(-offset, duration, delay, easing));
-                StartCoroutine(ImageTransition(-offset, duration, delay, easing));
-                StartCoroutine(PanelTransition(-offset, duration, delay, easing));
+                monoBehaviour.StartCoroutine(TextTransition(-offset, duration, delay, easing));
+                monoBehaviour.StartCoroutine(ImageTransition(-offset, duration, delay, easing));
+                monoBehaviour.StartCoroutine(PanelTransition(-offset, duration, delay, easing));
                 break;
         }
     }
@@ -204,6 +188,8 @@ internal class Transition : MonoBehaviour
         if (textComponent == null) { yield break; }
 
         float elapsedTime = 0f;
+        Vector2 startPos, targetPos;
+
         targetPos = textComponent.rectTransform.anchoredPosition;
         startPos = targetPos - offset;
         textComponent.rectTransform.anchoredPosition = startPos;
@@ -212,7 +198,7 @@ internal class Transition : MonoBehaviour
         while (elapsedTime < duration)
         {
             float time = elapsedTime / duration;
-            float easedTime = SetEasingFunction(time, easing);
+            float easedTime = Easing.SetEasingFunction(time, easing);
 
             textComponent.rectTransform.anchoredPosition = Vector2.Lerp(startPos, targetPos, easedTime);
             elapsedTime += Time.deltaTime;
@@ -229,6 +215,8 @@ internal class Transition : MonoBehaviour
         if (imageComponent == null) { yield break; }
 
         float elapsedTime = 0f;
+        Vector2 startPos, targetPos;
+
         targetPos = imageComponent.rectTransform.anchoredPosition;
         startPos = targetPos - offset;
         imageComponent.rectTransform.anchoredPosition = startPos;
@@ -237,7 +225,7 @@ internal class Transition : MonoBehaviour
         while (elapsedTime < duration)
         {
             float time = elapsedTime / duration;
-            float easedTime = SetEasingFunction(time, easing);
+            float easedTime = Easing.SetEasingFunction(time, easing);
 
             imageComponent.rectTransform.anchoredPosition = Vector2.Lerp(startPos, targetPos, easedTime);
             elapsedTime += Time.deltaTime;
@@ -254,6 +242,8 @@ internal class Transition : MonoBehaviour
         if (panelTransform == null) { yield break; }
 
         float elapsedTime = 0f;
+        Vector2 startPos, targetPos;
+
         targetPos = panelTransform.anchoredPosition;
         startPos = targetPos - offset;
         panelTransform.anchoredPosition = startPos;
@@ -262,7 +252,7 @@ internal class Transition : MonoBehaviour
         while (elapsedTime < duration)
         {
             float time = elapsedTime / duration;
-            float easedTime = SetEasingFunction(time, easing);
+            float easedTime = Easing.SetEasingFunction(time, easing);
 
             panelTransform.anchoredPosition = Vector2.Lerp(startPos, targetPos, easedTime);
             elapsedTime += Time.deltaTime;
@@ -271,25 +261,5 @@ internal class Transition : MonoBehaviour
 
         panelTransform.anchoredPosition = targetPos;
     }
-
-    private float SetEasingFunction(float time, Motion.EasingType easing)
-    {
-        switch (easing)
-        {
-            case Motion.EasingType.Linear:
-                return time;
-            case Motion.EasingType.Cubic:
-                return time * time * time;
-            case Motion.EasingType.EaseIn:
-                return time * time;
-            case Motion.EasingType.EaseOut:
-                return time * (2 - time);
-            case Motion.EasingType.EaseInOut:
-                return time < 0.5f ? 2 * time * time : -1 + (4 - 2 * time) * time;
-            default:
-                return time;
-        }
-    }
-
 
 }

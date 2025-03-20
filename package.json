@@ -1,8 +1,8 @@
 {
   "name": "com.hollow1.unity-ui-motion",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "displayName": "Unity UI Motion",
-  "description": "A lightweight and flexible UI animation system for Unity",
+  "description": "A lightweight and flexible UI animation library for Unity",
   "unity": "2022.3",
   "author": {
     "name": "Hollow1",

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /* --------------------------------------------------------
@@ -14,23 +15,19 @@ using UnityEngine;
  * -------------------------------------------------------- */
 
 [AddComponentMenu("")]
-[RequireComponent(typeof(Motion))]
-internal class Fade : MonoBehaviour
+internal class Fade
 {
-    private CanvasGroup canvasGroup;
+    private readonly CanvasGroup canvasGroup;
+    private readonly MonoBehaviour monoBehaviour;
 
     private const float transparent = 0f;
     private const float visible = 1.0f;
     private const float fadeDuration = 0.5f;
 
-    void Awake()
+    public Fade(CanvasGroup cg, MonoBehaviour runner)
     {
-        canvasGroup = GetComponent<CanvasGroup>();
-        if (canvasGroup == null)
-        {
-            canvasGroup = gameObject.AddComponent<CanvasGroup>();
-            Debug.LogWarning($"[{gameObject.name}] No CanvasGroup component found, added automatically.");
-        }
+        canvasGroup = cg;
+        monoBehaviour = runner;
     }
 
     // ----------------------------------------------------- PUBLIC API -----------------------------------------------------
@@ -62,7 +59,7 @@ internal class Fade : MonoBehaviour
     /// <param name="duration">Time in seconds the fade animation should take</param>
     public void FadeIn(float delay = 0f, float duration = fadeDuration)
     {
-        StartCoroutine(FadeUiIn(delay, duration));
+        monoBehaviour.StartCoroutine(FadeUiIn(delay, duration));
     }
 
     /// <summary>
@@ -72,7 +69,7 @@ internal class Fade : MonoBehaviour
     /// <param name="duration">Time in seconds the fade animation should take</param>
     public void FadeOut(float delay = 0f, float duration = fadeDuration)
     {
-        StartCoroutine(FadeUiOut(delay, duration));
+        monoBehaviour.StartCoroutine(FadeUiOut(delay, duration));
     }
 
     private IEnumerator FadeUiIn(float delay, float duration)
