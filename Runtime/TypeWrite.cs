@@ -27,10 +27,10 @@ internal class TypeWrite
     private const float standardDelay = 0.3f;
     private const float standardDuration = 3f;
 
-    public TypeWrite(TextMeshProUGUI tmp, MonoBehaviour mono)
+    public TypeWrite(TextMeshProUGUI tmp, MonoBehaviour runner)
     {
         textComponent = tmp;
-        monoBehaviour = mono;
+        monoBehaviour = runner;
         targetText = textComponent.text;
         length = targetText.Length;
     }
