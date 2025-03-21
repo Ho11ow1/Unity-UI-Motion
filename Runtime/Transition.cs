@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using UnityEngine.UI;
 using TMPro;
 
@@ -13,55 +12,26 @@ using TMPro;
  * position transitions on Unity UI elements with support
  * for multiple easing functions and directions.
  * 
- * Version: 1.1.0
+ * Version: 2.0.0
  * GitHub: https://github.com/Hollow1/Unity-UI-Motion
  * -------------------------------------------------------- */
-public class Transition : MonoBehaviour
+
+[AddComponentMenu("")]
+internal class Transition
 {
-    public enum TransitionTarget
-    {
-        Text,
-        Image,
-        Panel,
-        All
-    }
+    private readonly TextMeshProUGUI textComponent;
+    private readonly Image imageComponent;
+    private readonly RectTransform panelTransform;
+    private readonly MonoBehaviour monoBehaviour;
 
-    public enum EasingType
-    {
-        Linear,
-        Cubic,
-        EaseIn, // Quadratic
-        EaseOut, // Quadratic
-        EaseInOut // Quadratic
-    }
-
-    private TextMeshProUGUI textComponent;
-    private Image imageComponent;
-    private RectTransform panelTransform;
-
-    private Vector2 startPos;
-    private Vector2 targetPos;
     private const float transitionTime = 0.5f;
 
-    void Start()
+    public Transition(TextMeshProUGUI text, Image image, RectTransform panel, MonoBehaviour runner)
     {
-        textComponent = GetComponentInChildren<TextMeshProUGUI>();
-        if (textComponent == null)
-        {
-            Debug.LogWarning($"[{gameObject.name}] No Text component found in children. Parent: [{transform.parent.name ?? "none"}]");
-        }
-
-        imageComponent = GetComponentsInChildren<Image>().FirstOrDefault((img) => img.gameObject != gameObject);
-        if (imageComponent == null)
-        {
-            Debug.LogWarning($"[{gameObject.name}] No Image component found in children. Parent: [{transform.parent.name ?? "none"}]");
-        }
-
-        panelTransform = GetComponent<RectTransform>();
-        if (panelTransform == null)
-        {
-            Debug.LogWarning($"[{gameObject.name}] No RectTransform component found.");
-        }
+        textComponent = text;
+        imageComponent = image;
+        panelTransform = panel;
+        monoBehaviour = runner;
     }
 
     // ----------------------------------------------------- PUBLIC API -----------------------------------------------------
@@ -74,23 +44,23 @@ public class Transition : MonoBehaviour
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void TransitionUp(TransitionTarget target, float offset, EasingType easing = EasingType.Linear, float duration = transitionTime, float delay = 0f)
+    public void TransitionUp(Motion.TransitionTarget target, float offset, Motion.EasingType easing = Motion.EasingType.Linear, float duration = transitionTime, float delay = 0f)
     {
         switch (target)
         {
-            case TransitionTarget.Text:
-                StartCoroutine(TextTransition(new Vector2(0, offset), duration, delay, easing));
+            case Motion.TransitionTarget.Text:
+                monoBehaviour.StartCoroutine(TextTransition(new Vector2(0, offset), duration, delay, easing));
                 break;
-            case TransitionTarget.Image:
-                StartCoroutine(ImageTransition(new Vector2(0, offset), duration, delay, easing));
+            case Motion.TransitionTarget.Image:
+                monoBehaviour.StartCoroutine(ImageTransition(new Vector2(0, offset), duration, delay, easing));
                 break;
-            case TransitionTarget.Panel:
-                StartCoroutine(PanelTransition(new Vector2(0, offset), duration, delay, easing));
+            case Motion.TransitionTarget.Panel:
+                monoBehaviour.StartCoroutine(PanelTransition(new Vector2(0, offset), duration, delay, easing));
                 break;
-            case TransitionTarget.All:
-                StartCoroutine(TextTransition(new Vector2(0, offset), duration, delay, easing));
-                StartCoroutine(ImageTransition(new Vector2(0, offset), duration, delay, easing));
-                StartCoroutine(PanelTransition(new Vector2(0, offset), duration, delay, easing));
+            case Motion.TransitionTarget.All:
+                monoBehaviour.StartCoroutine(TextTransition(new Vector2(0, offset), duration, delay, easing));
+                monoBehaviour.StartCoroutine(ImageTransition(new Vector2(0, offset), duration, delay, easing));
+                monoBehaviour.StartCoroutine(PanelTransition(new Vector2(0, offset), duration, delay, easing));
                 break;
         }
     }
@@ -103,23 +73,23 @@ public class Transition : MonoBehaviour
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void TransitionDown(TransitionTarget target, float offset, EasingType easing = EasingType.Linear, float duration = transitionTime, float delay = 0f)
+    public void TransitionDown(Motion.TransitionTarget target, float offset, Motion.EasingType easing = Motion.EasingType.Linear, float duration = transitionTime, float delay = 0f)
     {
         switch (target)
         {
-            case TransitionTarget.Text:
-                StartCoroutine(TextTransition(new Vector2(0, -offset), duration, delay, easing));
+            case Motion.TransitionTarget.Text:
+                monoBehaviour.StartCoroutine(TextTransition(new Vector2(0, -offset), duration, delay, easing));
                 break;
-            case TransitionTarget.Image:
-                StartCoroutine(ImageTransition(new Vector2(0, -offset), duration, delay, easing));
+            case Motion.TransitionTarget.Image:
+                monoBehaviour.StartCoroutine(ImageTransition(new Vector2(0, -offset), duration, delay, easing));
                 break;
-            case TransitionTarget.Panel:
-                StartCoroutine(PanelTransition(new Vector2(0, -offset), duration, delay, easing));
+            case Motion.TransitionTarget.Panel:
+                monoBehaviour.StartCoroutine(PanelTransition(new Vector2(0, -offset), duration, delay, easing));
                 break;
-            case TransitionTarget.All:
-                StartCoroutine(TextTransition(new Vector2(0, -offset), duration, delay, easing));
-                StartCoroutine(ImageTransition(new Vector2(0, -offset), duration, delay, easing));
-                StartCoroutine(PanelTransition(new Vector2(0, -offset), duration, delay, easing));
+            case Motion.TransitionTarget.All:
+                monoBehaviour.StartCoroutine(TextTransition(new Vector2(0, -offset), duration, delay, easing));
+                monoBehaviour.StartCoroutine(ImageTransition(new Vector2(0, -offset), duration, delay, easing));
+                monoBehaviour.StartCoroutine(PanelTransition(new Vector2(0, -offset), duration, delay, easing));
                 break;
         }
     }
@@ -132,23 +102,23 @@ public class Transition : MonoBehaviour
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void TransitionLeft(TransitionTarget target, float offset, EasingType easing = EasingType.Linear, float duration = transitionTime, float delay = 0f)
+    public void TransitionLeft(Motion.TransitionTarget target, float offset, Motion.EasingType easing = Motion.EasingType.Linear, float duration = transitionTime, float delay = 0f)
     {
         switch (target)
         {
-            case TransitionTarget.Text:
-                StartCoroutine(TextTransition(new Vector2(-offset, 0), duration, delay, easing));
+            case Motion.TransitionTarget.Text:
+                monoBehaviour.StartCoroutine(TextTransition(new Vector2(-offset, 0), duration, delay, easing));
                 break;
-            case TransitionTarget.Image:
-                StartCoroutine(ImageTransition(new Vector2(-offset, 0), duration, delay, easing));
+            case Motion.TransitionTarget.Image:
+                monoBehaviour.StartCoroutine(ImageTransition(new Vector2(-offset, 0), duration, delay, easing));
                 break;
-            case TransitionTarget.Panel:
-                StartCoroutine(PanelTransition(new Vector2(-offset, 0), duration, delay, easing));
+            case Motion.TransitionTarget.Panel:
+                monoBehaviour.StartCoroutine(PanelTransition(new Vector2(-offset, 0), duration, delay, easing));
                 break;
-            case TransitionTarget.All:
-                StartCoroutine(TextTransition(new Vector2(-offset, 0), duration, delay, easing));
-                StartCoroutine(ImageTransition(new Vector2(-offset, 0), duration, delay, easing));
-                StartCoroutine(PanelTransition(new Vector2(-offset, 0), duration, delay, easing));
+            case Motion.TransitionTarget.All:
+                monoBehaviour.StartCoroutine(TextTransition(new Vector2(-offset, 0), duration, delay, easing));
+                monoBehaviour.StartCoroutine(ImageTransition(new Vector2(-offset, 0), duration, delay, easing));
+                monoBehaviour.StartCoroutine(PanelTransition(new Vector2(-offset, 0), duration, delay, easing));
                 break;
         }
     }
@@ -161,23 +131,23 @@ public class Transition : MonoBehaviour
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void TransitionRight(TransitionTarget target, float offset, EasingType easing = EasingType.Linear, float duration = transitionTime, float delay = 0f)
+    public void TransitionRight(Motion.TransitionTarget target, float offset, Motion.EasingType easing = Motion.EasingType.Linear, float duration = transitionTime, float delay = 0f)
     {
         switch (target)
         {
-            case TransitionTarget.Text:
-                StartCoroutine(TextTransition(new Vector2(offset, 0), duration, delay, easing));
+            case Motion.TransitionTarget.Text:
+                monoBehaviour.StartCoroutine(TextTransition(new Vector2(offset, 0), duration, delay, easing));
                 break;
-            case TransitionTarget.Image:
-                StartCoroutine(ImageTransition(new Vector2(offset, 0), duration, delay, easing));
+            case Motion.TransitionTarget.Image:
+                monoBehaviour.StartCoroutine(ImageTransition(new Vector2(offset, 0), duration, delay, easing));
                 break;
-            case TransitionTarget.Panel:
-                StartCoroutine(PanelTransition(new Vector2(offset, 0), duration, delay, easing));
+            case Motion.TransitionTarget.Panel:
+                monoBehaviour.StartCoroutine(PanelTransition(new Vector2(offset, 0), duration, delay, easing));
                 break;
-            case TransitionTarget.All:
-                StartCoroutine(TextTransition(new Vector2(offset, 0), duration, delay, easing));
-                StartCoroutine(ImageTransition(new Vector2(offset, 0), duration, delay, easing));
-                StartCoroutine(PanelTransition(new Vector2(offset, 0), duration, delay, easing));
+            case Motion.TransitionTarget.All:
+                monoBehaviour.StartCoroutine(TextTransition(new Vector2(offset, 0), duration, delay, easing));
+                monoBehaviour.StartCoroutine(ImageTransition(new Vector2(offset, 0), duration, delay, easing));
+                monoBehaviour.StartCoroutine(PanelTransition(new Vector2(offset, 0), duration, delay, easing));
                 break;
         }
     }
@@ -190,34 +160,36 @@ public class Transition : MonoBehaviour
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void TransitionPosition(TransitionTarget target, Vector2 offset, EasingType easing = EasingType.Linear, float duration = transitionTime, float delay = 0f)
+    public void TransitionPosition(Motion.TransitionTarget target, Vector2 offset, Motion.EasingType easing = Motion.EasingType.Linear, float duration = transitionTime, float delay = 0f)
     {
         switch (target)
         {
-            case TransitionTarget.Text:
-                StartCoroutine(TextTransition(-offset, duration, delay, easing));
+            case Motion.TransitionTarget.Text:
+                monoBehaviour.StartCoroutine(TextTransition(-offset, duration, delay, easing));
                 break;
-            case TransitionTarget.Image:
-                StartCoroutine(ImageTransition(-offset, duration, delay, easing));
+            case Motion.TransitionTarget.Image:
+                monoBehaviour.StartCoroutine(ImageTransition(-offset, duration, delay, easing));
                 break;
-            case TransitionTarget.Panel:
-                StartCoroutine(PanelTransition(-offset, duration, delay, easing));
+            case Motion.TransitionTarget.Panel:
+                monoBehaviour.StartCoroutine(PanelTransition(-offset, duration, delay, easing));
                 break;
-            case TransitionTarget.All:
-                StartCoroutine(TextTransition(-offset, duration, delay, easing));
-                StartCoroutine(ImageTransition(-offset, duration, delay, easing));
-                StartCoroutine(PanelTransition(-offset, duration, delay, easing));
+            case Motion.TransitionTarget.All:
+                monoBehaviour.StartCoroutine(TextTransition(-offset, duration, delay, easing));
+                monoBehaviour.StartCoroutine(ImageTransition(-offset, duration, delay, easing));
+                monoBehaviour.StartCoroutine(PanelTransition(-offset, duration, delay, easing));
                 break;
         }
     }
 
     // ----------------------------------------------------- TEXT BASED TRANSITIONS -----------------------------------------------------
 
-    private IEnumerator TextTransition(Vector2 offset, float duration, float delay, EasingType easing)
+    private IEnumerator TextTransition(Vector2 offset, float duration, float delay, Motion.EasingType easing)
     {
         if (textComponent == null) { yield break; }
 
         float elapsedTime = 0f;
+        Vector2 startPos, targetPos;
+
         targetPos = textComponent.rectTransform.anchoredPosition;
         startPos = targetPos - offset;
         textComponent.rectTransform.anchoredPosition = startPos;
@@ -226,7 +198,7 @@ public class Transition : MonoBehaviour
         while (elapsedTime < duration)
         {
             float time = elapsedTime / duration;
-            float easedTime = SetEasingFunction(time, easing);
+            float easedTime = Easing.SetEasingFunction(time, easing);
 
             textComponent.rectTransform.anchoredPosition = Vector2.Lerp(startPos, targetPos, easedTime);
             elapsedTime += Time.deltaTime;
@@ -238,11 +210,13 @@ public class Transition : MonoBehaviour
 
     // ----------------------------------------------------- IMAGE BASED TRANSITIONS -----------------------------------------------------
 
-    private IEnumerator ImageTransition(Vector2 offset, float duration, float delay, EasingType easing)
+    private IEnumerator ImageTransition(Vector2 offset, float duration, float delay, Motion.EasingType easing)
     {
         if (imageComponent == null) { yield break; }
 
         float elapsedTime = 0f;
+        Vector2 startPos, targetPos;
+
         targetPos = imageComponent.rectTransform.anchoredPosition;
         startPos = targetPos - offset;
         imageComponent.rectTransform.anchoredPosition = startPos;
@@ -251,7 +225,7 @@ public class Transition : MonoBehaviour
         while (elapsedTime < duration)
         {
             float time = elapsedTime / duration;
-            float easedTime = SetEasingFunction(time, easing);
+            float easedTime = Easing.SetEasingFunction(time, easing);
 
             imageComponent.rectTransform.anchoredPosition = Vector2.Lerp(startPos, targetPos, easedTime);
             elapsedTime += Time.deltaTime;
@@ -263,11 +237,13 @@ public class Transition : MonoBehaviour
 
     // ----------------------------------------------------- PANEL BASED TRANSITIONS -----------------------------------------------------
 
-    private IEnumerator PanelTransition(Vector2 offset, float duration, float delay, EasingType easing)
+    private IEnumerator PanelTransition(Vector2 offset, float duration, float delay, Motion.EasingType easing)
     {
         if (panelTransform == null) { yield break; }
 
         float elapsedTime = 0f;
+        Vector2 startPos, targetPos;
+
         targetPos = panelTransform.anchoredPosition;
         startPos = targetPos - offset;
         panelTransform.anchoredPosition = startPos;
@@ -276,7 +252,7 @@ public class Transition : MonoBehaviour
         while (elapsedTime < duration)
         {
             float time = elapsedTime / duration;
-            float easedTime = SetEasingFunction(time, easing);
+            float easedTime = Easing.SetEasingFunction(time, easing);
 
             panelTransform.anchoredPosition = Vector2.Lerp(startPos, targetPos, easedTime);
             elapsedTime += Time.deltaTime;
@@ -286,22 +262,4 @@ public class Transition : MonoBehaviour
         panelTransform.anchoredPosition = targetPos;
     }
 
-    private float SetEasingFunction(float time, EasingType easing)
-    {
-        switch (easing)
-        {
-            case EasingType.Linear:
-                return time;
-            case EasingType.Cubic:
-                return time * time * time;
-            case EasingType.EaseIn:
-                return time * time;
-            case EasingType.EaseOut:
-                return time * (2 - time);
-            case EasingType.EaseInOut:
-                return time < 0.5f ? 2 * time * time : -1 + (4 - 2 * time) * time;
-            default:
-                return time;
-        }
-    }
 }

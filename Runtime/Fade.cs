@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /* --------------------------------------------------------
@@ -9,24 +10,24 @@ using UnityEngine;
  * fade transitions on Unity UI elements with support for
  * custom durations and delays.
  * 
- * Version: 1.1.0
+ * Version: 2.0.0
  * GitHub: https://github.com/Hollow1/Unity-UI-Motion
  * -------------------------------------------------------- */
-public class Fade : MonoBehaviour
+
+[AddComponentMenu("")]
+internal class Fade
 {
-    private CanvasGroup canvasGroup;
+    private readonly CanvasGroup canvasGroup;
+    private readonly MonoBehaviour monoBehaviour;
 
     private const float transparent = 0f;
     private const float visible = 1.0f;
     private const float fadeDuration = 0.5f;
 
-    void Start()
+    public Fade(CanvasGroup cg, MonoBehaviour runner)
     {
-        canvasGroup = GetComponent<CanvasGroup>();
-        if (canvasGroup == null)
-        {
-            Debug.LogWarning($"[{gameObject.name}] No CanvasGroup component found");
-        }
+        canvasGroup = cg;
+        monoBehaviour = runner;
     }
 
     // ----------------------------------------------------- PUBLIC API -----------------------------------------------------
@@ -58,7 +59,7 @@ public class Fade : MonoBehaviour
     /// <param name="duration">Time in seconds the fade animation should take</param>
     public void FadeIn(float delay = 0f, float duration = fadeDuration)
     {
-        StartCoroutine(FadeUiIn(delay, duration));
+        monoBehaviour.StartCoroutine(FadeUiIn(delay, duration));
     }
 
     /// <summary>
@@ -68,11 +69,13 @@ public class Fade : MonoBehaviour
     /// <param name="duration">Time in seconds the fade animation should take</param>
     public void FadeOut(float delay = 0f, float duration = fadeDuration)
     {
-        StartCoroutine(FadeUiOut(delay, duration));
+        monoBehaviour.StartCoroutine(FadeUiOut(delay, duration));
     }
 
     private IEnumerator FadeUiIn(float delay, float duration)
     {
+        if (canvasGroup == null) { yield break; }
+
         float elapsedTime = 0f;
         canvasGroup.alpha = transparent;
         if (delay > 0) { yield return new WaitForSeconds(delay); }
@@ -89,6 +92,8 @@ public class Fade : MonoBehaviour
 
     private IEnumerator FadeUiOut(float delay, float duration)
     {
+        if (canvasGroup == null) { yield break; }
+
         float elapsedTime = 0f;
         canvasGroup.alpha = visible;
         if (delay > 0) { yield return new WaitForSeconds(delay); }

@@ -20,50 +20,89 @@ A lightweight and flexible UI animation system for Unity that provides smooth tr
     - Optional animation delay
     - Custom position vectors
 
+- **Scale Transformations**
+  - Smooth scaling animations
+  - Configurable scale multiplier
+  - Support for different easing functions
+
+- **Rotation Animations**
+  - Precise rotation control in degrees
+  - Multiple easing options
+  - Configurable duration and delay
+
+- **Text Effects**
+  - Dynamic TypeWriter text animation
+  - Character-by-character reveal
+  - Customizable typing speed
+  - Configurable start delay
+
 ## Installation
 
 ### Option 1: Manual Installation
-1. Download the `Fade.cs` and `Transition.cs` scripts from this repository
-2. Add them to your Unity project's Assets folder
-3. Ensure your UI element has a CanvasGroup component attached(`Fade.cs`)
+1. Download the project from this repository
+2. Add the unzipped folder to your Assets folder
+3. Attach the `Motion.cs` component to your gameObject
 
 ### Option 2: Unity Package Manager
 1. In Unity, go to Window > Package Manager
 2. Click the + button and select "Add package from git URL..."
 3. Enter: ```https://github.com/Ho11ow1/Unity-UI-Motion.git```
 
-## Quick Start
+## Usage
 
-### Fade Animations
+### Basic Usage
 
 ```csharp
-// Get the Fade component from your UI element
-var fade = GetComponent<Fade>();
+// Get the reference
+Motion animation = uiElement.GetComponent<Motion>();
 
-// Fade in with default duration (0.5s)
-fade.FadeIn();
+// Fade in with the default duration
+animation.FadeIn();
 
-// Fade out with custom duration and delay
-fade.FadeOut(delay: 1.0f, duration: 0.3f);
+// Transition TextMeshPro text up with an offset of 2 (default duration)
+animation.TransitionUp(Motion.TransitionTarget.Text, 2)
 ```
 
-### Position Transitions
+### Advanced Usage
 
 ```csharp
-// Get the Transition component from your UI element
-var transition = GetComponent<Transition>();
+// Fade in with a 0.5 second delay and a 1 second duration
+animation.FadeIn(0.5f, 1f);
 
-// Slide in from right to left
-transition.TransitionLeft(target: Transition.TransitionTarget.Text, offset: 100f);
+// Scale up TextMeshPro text with a 1.5x multiplier and a cubic easing function (default duration)
+animation.ScaleUp(Motion.TransitionTarget.Text, 1.5f, Motion.EasingType.Cubic);
 
-// Diagonal slide in from bottom right
-transition.TransitionPosition(
-    target: Transition.TransitionTarget.Text,
-    offset: new Vector2(2, -2),
-    easing: EasingType.EaseInOut,
-    duration: 0.3f,
-    delay: 0.5f
-);
+// Rotate an Image 30° clockwise (default duration)
+animation.Rotate(Motion.TransitionTarget.Image, 30);
+```
+
+### Integration Example
+
+```csharp
+public class PopupManager : MonoBehaviour
+{
+    [SerializeField] GameObject panel;
+    private Motion panelMotion;
+
+    void Awake()
+    {
+        panelMotion = panel.GetComponent<Motion>();
+
+        panel.SetActive(true); // Make sure the Ui panel is active
+        panelMotion.TurnInvisible(); // Start invisible
+    }
+
+    public void ShowPopup()
+    {
+        panelMotion.FadeIn(0, 0.75f);
+        panelMotion.TransitionRight(Motion.TransitionTarget.Panel, 100, Motion.EasingType.EaseIn);
+    }
+
+    public void HidePopup() 
+    {
+        panelMotion.FadeOut(0f, 1f);
+    }
+}
 ```
 
 ## Requirements
