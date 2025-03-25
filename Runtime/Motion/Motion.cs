@@ -9,9 +9,9 @@ using TMPro;
  * Created by Hollow1
  * 
  * A base class for UI animation components providing
- * common functionality for internal animations.
+ * common functionality for internal classes.
  * 
- * Version: 2.0.0
+ * Version: 2.1.0
  * GitHub: https://github.com/Hollow1/Unity-UI-Motion
  * -------------------------------------------------------- */
 
@@ -42,7 +42,7 @@ public class Motion : MonoBehaviour
     private TypeWrite typeWriterComponent;
 
     // Component variables
-    private CanvasGroup group;
+    private CanvasGroup cg;
     private TextMeshProUGUI text;
     private Image image;
     private RectTransform panel;
@@ -52,7 +52,7 @@ public class Motion : MonoBehaviour
 
     void Awake()
     {
-        group = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
+        cg = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>(); // Probably remove auto-addition
 
         text = GetComponentInChildren<TextMeshProUGUI>();
 
@@ -65,13 +65,13 @@ public class Motion : MonoBehaviour
         panel = GetComponent<RectTransform>();
 
         #if UNITY_EDITOR
-        if (group == null) { Debug.LogWarning($"[{gameObject.name}] No CanvasGroup component found, added automatically."); }
+        if (cg == null) { Debug.LogWarning($"[{gameObject.name}] No CanvasGroup component found, added automatically."); }
         if (text == null) { Debug.LogWarning($"[{gameObject.name}] No Text component found in children. Parent: [{transform.parent.name ?? "none"}]"); }
         if (image == null) { Debug.LogWarning($"[{gameObject.name}] No Image component found in children. Parent: [{transform.parent.name ?? "none"}]"); }
         if (panel == null) { Debug.LogWarning($"[{gameObject.name}] No RectTransform component found."); }
         #endif
 
-        fadeComponent = new Fade(group, this);
+        fadeComponent = new Fade(cg, this);
         transitionComponent = new Transition(text, image, panel, this);
         scalingComponent = new Scale(text, image, panel, this);
         rotationComponent = new Rotate(text, image, panel, this);
@@ -119,68 +119,133 @@ public class Motion : MonoBehaviour
     // ----------------------------------------------------- Transition API -----------------------------------------------------
 
     /// <summary>
-    /// Transitions the UI element up using the default duration and delay
+    /// Transitions the UI element from a position offset upward back to its starting position
     /// </summary>
     /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
-    /// <param name="offset">Offset in pixels (or units depending on canvas scaling). Positive values move the element down by this amount before animating to its original position.</param>
+    /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). Positive values move the element up</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void TransitionUp(TransitionTarget target, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    public void TransitionFromUp(TransitionTarget target, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
-        transitionComponent.TransitionUp(target, offset, easing, duration, delay);
+        transitionComponent.TransitionFromUp(target, offset, easing, duration, delay);
     }
 
     /// <summary>
-    /// Transitions the UI element down using the default duration and delay
+    /// Transitions the UI element from a position offset downward back to its starting position
     /// </summary>
     /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
-    /// <param name="offset">Offset in pixels (or units depending on canvas scaling). Positive values move the element up by this amount before animating to its original position.</param>
+    /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). Positive values move the element down</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void TransitionDown(TransitionTarget target, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    public void TransitionFromDown(TransitionTarget target, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
-        transitionComponent.TransitionDown(target, offset, easing, duration, delay);
+        transitionComponent.TransitionFromDown(target, offset, easing, duration, delay);
     }
 
     /// <summary>
-    /// Transitions the UI element from right to left using the default duration and delay
+    /// Transitions the UI element from a position offset to the left back to its starting position
     /// </summary>
     /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
-    /// <param name="offset">Offset in pixels (or units depending on canvas scaling). Positive values move the element to the right by this amount before animating to its original position.</param>
+    /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). Positive values move the element to the left</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void TransitionLeft(TransitionTarget target, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    public void TransitionFromLeft(TransitionTarget target, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
-        transitionComponent.TransitionLeft(target, offset, easing, duration, delay);
+        transitionComponent.TransitionFromLeft(target, offset, easing, duration, delay);
     }
 
     /// <summary>
-    /// Transitions the UI element from left to right using the default duration and delay
+    /// Transitions the UI element from a position offset to the right back to its starting position
     /// </summary>
     /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
-    /// <param name="offset">Offset in pixels (or units depending on canvas scaling). Positive values move the element to the left by this amount before animating to its original position.</param>
+    /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). Positive values move the element to the right</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void TransitionRight(TransitionTarget target, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    public void TransitionFromRight(TransitionTarget target, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
-        transitionComponent.TransitionRight(target, offset, easing, duration, delay);
+        transitionComponent.TransitionFromRight(target, offset, easing, duration, delay);
     }
 
     /// <summary>
-    /// Transitions the UI element on both axis based on the offset
+    /// Transitions the UI element from an offset position on both axes back to its starting position
     /// </summary>
     /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
-    /// <param name="offset">Offset in pixels (or units depending on canvas scaling). Positive values move the element to the right and up by this amount before animating to its original position.</param>
+    /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). determines the starting offset position to animate from, Positive values offset right and up</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void TransitionPosition(TransitionTarget target, Vector2 offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    public void TransitionFromPosition(TransitionTarget target, Vector2 offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
-        transitionComponent.TransitionPosition(target, offset, easing, duration, delay);
+        transitionComponent.TransitionFromPosition(target, offset, easing, duration, delay);
+    }
+
+    /// <summary>
+    /// Transitions the UI element from its starting position to a position offset upward
+    /// </summary>
+    /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
+    /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). Positive values move the element up</param>
+    /// <param name="easing">Specifies the easing method the transition should use</param>
+    /// <param name="duration">Time in seconds for the transition duration</param>
+    /// <param name="delay">Time in seconds to wait before starting the transition</param>
+    public void TransitionToUp(TransitionTarget target, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    {
+        transitionComponent.TransitionToUp(target, offset, easing, duration, delay);
+    }
+
+    /// <summary>
+    /// Transitions the UI element from its starting position to a position offset downward
+    /// </summary>
+    /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
+    /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). Positive values move the element down</param>
+    /// <param name="easing">Specifies the easing method the transition should use</param>
+    /// <param name="duration">Time in seconds for the transition duration</param>
+    /// <param name="delay">Time in seconds to wait before starting the transition</param>
+    public void TransitionToDown(TransitionTarget target, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    {
+        transitionComponent.TransitionToDown(target, offset, easing, duration, delay);
+    }
+
+    /// <summary>
+    /// Transitions the UI element from its starting position to a position offset to the left
+    /// </summary>
+    /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
+    /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). Positive values move the element to the left</param>
+    /// <param name="easing">Specifies the easing method the transition should use</param>
+    /// <param name="duration">Time in seconds for the transition duration</param>
+    /// <param name="delay">Time in seconds to wait before starting the transition</param>
+    public void TransitionToLeft(TransitionTarget target, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    {
+        transitionComponent.TransitionToLeft(target, offset, easing, duration, delay);
+    }
+
+    /// <summary>
+    /// Transitions the UI element from its starting position to a position offset to the right
+    /// </summary>
+    /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
+    /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). Positive values move the element to the right</param>
+    /// <param name="easing">Specifies the easing method the transition should use</param>
+    /// <param name="duration">Time in seconds for the transition duration</param>
+    /// <param name="delay">Time in seconds to wait before starting the transition</param>
+    public void TransitionToRight(TransitionTarget target, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    {
+        transitionComponent.TransitionToRight(target, offset, easing, duration, delay);
+    }
+
+    /// <summary>
+    /// Transitions the UI element from its starting position to an offset position
+    /// </summary>
+    /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
+    /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). determines the final offset position to animate to, Positive values offset right and up</param>
+    /// <param name="easing">Specifies the easing method the transition should use</param>
+    /// <param name="duration">Time in seconds for the transition duration</param>
+    /// <param name="delay">Time in seconds to wait before starting the transition</param>
+    public void TransitionToPosition(TransitionTarget target, Vector2 offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    {
+        transitionComponent.TransitionToPosition(target, offset, easing, duration, delay);
     }
 
     // ----------------------------------------------------- Rotation API -----------------------------------------------------
@@ -189,13 +254,13 @@ public class Motion : MonoBehaviour
     /// Rotate the UI element with a custom delay and duration
     /// </summary>
     /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
-    /// <param name="degrees">Degrees the rotation should rotate, positive values go clockwise, negative counter-clockwise</param>
+    /// <param name="degrees">Degrees the rotation should rotate, positive values go counter-clockwise, negative clockwise</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the rotation duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
     public void Rotate(TransitionTarget target, float degrees, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
-        rotationComponent.RotateUi(target, degrees, easing, duration, delay);
+        rotationComponent.Rotation(target, degrees, easing, duration, delay);
     }
 
     // ----------------------------------------------------- Scaling API -----------------------------------------------------

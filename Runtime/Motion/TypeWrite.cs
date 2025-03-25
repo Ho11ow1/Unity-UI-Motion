@@ -7,11 +7,9 @@ using UnityEngine;
  * Unity UI Motion - TypeWriter Animation Component
  * Created by Hollow1
  * 
- * A lightweight typewriter component for creating smooth
- * typeWriter effects on TextMeshPro elements with support
- * for a custom character by character delay and animation duration.
+ * Applies a typewriter effect to a TextMeshProUGUI component
  * 
- * Version: 2.0.0
+ * Version: 2.1.0
  * GitHub: https://github.com/Hollow1/Unity-UI-Motion
  * -------------------------------------------------------- */
 
@@ -35,15 +33,14 @@ internal class TypeWrite
         length = targetText.Length;
     }
 
-    /// <summary>
-    /// Applies a typeWriter effect to UI text with a custom delay and duration
-    /// </summary>
-    /// <param name="delay">Time in seconds for the delay per character</param>
-    /// <param name="duration">Time in seconds for the entire text to animate</param>
+    // ----------------------------------------------------- PUBLIC API -----------------------------------------------------
+
     public void TypeWriter(float delay = standardDelay, float duration = standardDuration)
     {
         monoBehaviour.StartCoroutine(TW(delay, duration));
     }
+
+    // ----------------------------------------------------- TYPEWRITER EFFECT -----------------------------------------------------
 
     private IEnumerator TW(float delay, float duration)
     {
