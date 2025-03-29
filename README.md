@@ -5,25 +5,15 @@ A lightweight and flexible UI animation system for Unity that provides smooth tr
 ## Features
 
 - **Fade Animations**
-  - Smooth fade in/out transitions
-  - Customizable duration and delay
-  - Instant visibility toggling
   - Zero-configuration setup with CanvasGroup
 
 - **Position Transitions** 
-  - Support for all 4 directions (Up, Down, Left, Right) + diagonal
   - Multiple easing functions
   - Flexible component targeting
-  - Customization options:
-    - Configurable offset distance
-    - Adjustable animation duration
-    - Optional animation delay
-    - Custom position vectors
 
 - **Scale Transformations**
   - Smooth scaling animations
   - Configurable scale multiplier
-  - Support for different easing functions
 
 - **Rotation Animations**
   - Precise rotation control in degrees
@@ -32,16 +22,20 @@ A lightweight and flexible UI animation system for Unity that provides smooth tr
 
 - **Text Effects**
   - Dynamic TypeWriter text animation
-  - Character-by-character reveal
   - Customizable typing speed
   - Configurable start delay
+
+- **Button menu creation**
+  - Explicit navigation
+  - Vertical or horizontal layouts
+  - Automatic button hover effects
 
 ## Installation
 
 ### Option 1: Manual Installation
 1. Download the project from this repository
 2. Add the unzipped folder to your Assets folder
-3. Attach the `Motion.cs` component to your gameObject
+3. Attach the appropriate component (`Motion.cs` or `Listifier.cs`) to your gameObject
 
 ### Option 2: Unity Package Manager
 1. In Unity, go to Window > Package Manager
@@ -50,65 +44,78 @@ A lightweight and flexible UI animation system for Unity that provides smooth tr
 
 ## Usage
 
-### Basic Usage
-
 ```csharp
-// Get the reference
-Motion animation = uiElement.GetComponent<Motion>();
-
-// Fade in with the default duration
-animation.FadeIn();
-
-// Transition TextMeshPro text up with an offset of 2 (default duration)
-animation.TransitionUp(Motion.TransitionTarget.Text, 2)
-```
-
-### Advanced Usage
-
-```csharp
-// Fade in with a 0.5 second delay and a 1 second duration
-animation.FadeIn(0.5f, 1f);
-
-// Scale up TextMeshPro text with a 1.5x multiplier and a cubic easing function (default duration)
-animation.ScaleUp(Motion.TransitionTarget.Text, 1.5f, Motion.EasingType.Cubic);
-
-// Rotate an Image 30° clockwise (default duration)
-animation.Rotate(Motion.TransitionTarget.Image, 30);
-```
-
-### Integration Example
-
-```csharp
-public class PopupManager : MonoBehaviour
+public class Example : MonoBehaviour
 {
     [SerializeField] GameObject panel;
+    private EventSystem eventSystem;
+
     private Motion panelMotion;
+    private Listifier panelListifier;
+
+    private List<GameObject> objectList;
 
     void Awake()
     {
-        panelMotion = panel.GetComponent<Motion>();
+        panel.SetActive(true);
 
-        panel.SetActive(true); // Make sure the Ui panel is active
-        panelMotion.TurnInvisible(); // Start invisible
+        panelMotion = panel.GetComponent<Motion>();
+        panelListifier = panel.GetComponent<Listifier>();
+        eventSystem = FindAnyObjectByType<EventSystem>();
+
+        panelMotion.TurnInvisible();
+    }
+
+    void Start()
+    {
+        var menuList = new List<KeyValuePair<string, string>>
+        {
+            new KeyValuePair<string, string>("Title", "Example description"),
+            new KeyValuePair<string, string>("Longer title", "Longer example description"),
+            new KeyValuePair<string, string>("Exit game", "Short example")
+        };
+        // Create a vertical list with 100 pixel spacing
+        panelListifier.Listify(menuList, 100);
+
+        // Or create a horizontal list with 150 pixel spacing
+        // listifier.Rowify(menuList, 150);
+
+        // Seperate functions
+        panelListifier.SetNavigation(Listifier.ListDirection.Vertical); // Use the appropriate ListDirection based on Listify or Rowify
+        panelListifier.SetButtonEvents(Example, Example, Example, Example, Example, Example);
+
+        // Single combined function
+        // panelListifier.SetNavigationWithEvents(Listifier.ListDirection.Vertical, Example, Example, Example, Example, Example, Example);
+
+        objectList = panelListifier.GetObjectList();
+        eventSystem.SetSelectedGameObject(objectList[0]);
     }
 
     public void ShowPopup()
     {
         panelMotion.FadeIn(0, 0.75f);
-        panelMotion.TransitionRight(Motion.TransitionTarget.Panel, 100, Motion.EasingType.EaseIn);
+        panelMotion.TransitionFromLeft(Motion.TransitionTarget.Panel, 100, Motion.EasingType.EaseIn);
     }
 
-    public void HidePopup() 
+    public void HidePopup()
     {
         panelMotion.FadeOut(0f, 1f);
     }
+
+    private void Example()
+    {
+        Debug.Log("Button pressed");
+    }
+
+
 }
+
 ```
 
 ## Requirements
 
 - Unity 2022.3 or higher
-- TextMeshPro package (for text transitions)
+- TextMeshPro package (for text transitions and `Listifier` component)
 
 ## License
 
