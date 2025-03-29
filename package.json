@@ -19,7 +19,10 @@
     "animation",
     "ui-navigation",
     "menu-creation",
-    "popup"
+    "popup",
+    "simple",
+    "lightweight",
+    "no-configuration"
   ],
   "licensesUrl": "https://github.com/Ho11ow1/Unity-UI-Motion/blob/master/LICENSE"
 }
