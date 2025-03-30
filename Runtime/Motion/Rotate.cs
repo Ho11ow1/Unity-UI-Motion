@@ -22,8 +22,8 @@ internal class Rotate
     private readonly RectTransform panelTransform;
     private readonly MonoBehaviour monoBehaviour;
 
-    private readonly Quaternion[][] originalRotation;
-    private readonly bool[][] storedRotation;
+    private readonly Quaternion[][] originalRotation = new Quaternion[3][] { new Quaternion[10], new Quaternion[10], new Quaternion[10] };
+    private readonly bool[][] storedRotation = new bool[3][] { new bool[10], new bool[10], new bool[10] };
 
     private const float rotationDuration = 1.5f;
 

@@ -14,10 +14,12 @@ using UnityEngine;
  * -------------------------------------------------------- */
 
 [AddComponentMenu("")]
-internal class TypeWrite
+internal class TypeWrite // TODO: Fix component completion to the correct occurence of textComponent[occurrence].text
 {
     private readonly TextMeshProUGUI[] textComponent;
     private readonly MonoBehaviour monoBehaviour;
+
+    // private readonly string[] targetArr = new string[10]; Maybe?
 
     private string targetText;
     private int length;

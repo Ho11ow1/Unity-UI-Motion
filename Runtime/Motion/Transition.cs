@@ -22,8 +22,8 @@ internal class Transition
     private readonly RectTransform panelTransform;
     private readonly MonoBehaviour monoBehaviour;
 
-    private readonly Vector2[][] originalPosition;
-    private readonly bool[][] storedPosition;
+    private readonly Vector2[][] originalPosition = new Vector2[3][] { new Vector2[10], new Vector2[10], new Vector2[10] };
+    private readonly bool[][] storedPosition = new bool[3][] { new bool[10], new bool[10], new bool[10] };
 
     private const float transitionTime = 0.5f;
 

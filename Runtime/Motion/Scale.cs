@@ -22,8 +22,8 @@ internal class Scale
     private readonly RectTransform panelTransform;
     private readonly MonoBehaviour monoBehaviour;
 
-    private readonly Vector2[][] originalScale;
-    private readonly bool[][] storedScale;
+    private readonly Vector2[][] originalScale = new Vector2[3][] { new Vector2[10], new Vector2[10], new Vector2[10] };
+    private readonly bool[][] storedScale = new bool[3][] { new bool[10], new bool[10], new bool[10] };
 
     private const float scalingTime = 0.5f;
 

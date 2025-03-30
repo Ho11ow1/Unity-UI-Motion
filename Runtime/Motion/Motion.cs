@@ -83,12 +83,6 @@ public class Motion : MonoBehaviour
         typeWriterComponent = new TypeWrite(texts, this);
     }
 
-    // Transition: O
-    // Scale: O
-    // Rotate: O
-    // TypeWrite: I (TypeWrites accordingly, sets all to same text at end)
-    // Possibility: occurrence -= 1; causes crash? (Worked before adding)
-
     // ----------------------------------------------------- Fade API -----------------------------------------------------
 
     /// <summary>
