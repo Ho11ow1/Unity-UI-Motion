@@ -52,12 +52,12 @@ public class Motion : MonoBehaviour
 
     void Awake()
     {
-        cg = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>(); // Probably remove auto-addition
+        cg = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
 
-        text = GetComponentInChildren<TextMeshProUGUI>();
+        text = GetComponentInChildren<TextMeshProUGUI>(); // Maybe convert into array for better multi processing
 
-        image = null;
-        foreach (RectTransform child in transform) // transform: Direct access to children
+        image = null; // Maybe convert into array for better multi processing
+        foreach (RectTransform child in transform)
         {
             if (child.TryGetComponent<Image>(out image)) { break; }
         }
