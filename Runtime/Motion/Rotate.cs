@@ -17,17 +17,17 @@ using TMPro;
 [AddComponentMenu("")]
 internal class Rotate
 {
-    private readonly TextMeshProUGUI textComponent;
-    private readonly Image imageComponent;
+    private readonly TextMeshProUGUI[] textComponent;
+    private readonly Image[] imageComponent;
     private readonly RectTransform panelTransform;
     private readonly MonoBehaviour monoBehaviour;
 
-    private readonly Quaternion[] originalRotation = { Quaternion.identity, Quaternion.identity, Quaternion.identity };
-    private readonly bool[] storedRotation = { false, false, false };
+    private readonly Quaternion[][] originalRotation;
+    private readonly bool[][] storedRotation;
 
     private const float rotationDuration = 1.5f;
 
-    public Rotate(TextMeshProUGUI text, Image image, RectTransform panel, MonoBehaviour runner)
+    public Rotate(TextMeshProUGUI[] text, Image[] image, RectTransform panel, MonoBehaviour runner)
     {
         textComponent = text;
         imageComponent = image;
@@ -37,73 +37,73 @@ internal class Rotate
 
     // ----------------------------------------------------- PUBLIC API -----------------------------------------------------
 
-    public void Rotation(Motion.TransitionTarget target, float degrees, Motion.EasingType easing = Motion.EasingType.Linear, float duration = rotationDuration, float delay = 0f)
+    public void Rotation(Motion.TransitionTarget target, int occurrence, float degrees, Motion.EasingType easing = Motion.EasingType.Linear, float duration = rotationDuration, float delay = 0f)
     {
         switch (target)
         {
             case Motion.TransitionTarget.Text:
-                monoBehaviour.StartCoroutine(RotateUi(textComponent.rectTransform, degrees, duration, delay, easing));
+                monoBehaviour.StartCoroutine(RotateUi(textComponent[occurrence].rectTransform, occurrence, degrees, duration, delay, easing));
                 break;
             case Motion.TransitionTarget.Image:
-                monoBehaviour.StartCoroutine(RotateUi(imageComponent.rectTransform, degrees, duration, delay, easing));
+                monoBehaviour.StartCoroutine(RotateUi(imageComponent[occurrence].rectTransform, occurrence, degrees, duration, delay, easing));
                 break;
             case Motion.TransitionTarget.Panel:
-                monoBehaviour.StartCoroutine(RotateUi(panelTransform, degrees, duration, delay, easing));
+                monoBehaviour.StartCoroutine(RotateUi(panelTransform, occurrence, degrees, duration, delay, easing));
                 break;
             case Motion.TransitionTarget.All:
-                monoBehaviour.StartCoroutine(RotateUi(textComponent.rectTransform, degrees, duration, delay, easing));
-                monoBehaviour.StartCoroutine(RotateUi(imageComponent.rectTransform, degrees, duration, delay, easing));
-                monoBehaviour.StartCoroutine(RotateUi(panelTransform, degrees, duration, delay, easing));
+                monoBehaviour.StartCoroutine(RotateUi(textComponent[occurrence].rectTransform, occurrence, degrees, duration, delay, easing));
+                monoBehaviour.StartCoroutine(RotateUi(imageComponent[occurrence].rectTransform, occurrence, degrees, duration, delay, easing));
+                monoBehaviour.StartCoroutine(RotateUi(panelTransform, occurrence, degrees, duration, delay, easing));
                 break;
         }
     }
 
     // ----------------------------------------------------- ROTATE ANIMATION -----------------------------------------------------
 
-    private IEnumerator RotateUi(RectTransform component, float degrees, float duration, float delay, Motion.EasingType easing)
+    private IEnumerator RotateUi(RectTransform component, int occurrence, float degrees, float duration, float delay, Motion.EasingType easing)
     {
         if (component == null) { yield break; }
 
         Quaternion startRotation = Quaternion.identity; 
         Quaternion targetRotation;
 
-        if (component == textComponent.rectTransform)
+        if (component == textComponent[occurrence].rectTransform)
         {
-            if (!storedRotation[0])
+            if (!storedRotation[0][occurrence])
             {
-                startRotation = textComponent.rectTransform.localRotation;
-                originalRotation[0] = startRotation;
-                storedRotation[0] = true;
+                startRotation = textComponent[occurrence].rectTransform.localRotation;
+                originalRotation[0][occurrence] = startRotation;
+                storedRotation[0][occurrence] = true;
             }
             else
             {
-                startRotation = originalRotation[0];
+                startRotation = originalRotation[0][occurrence];
             }
         }
-        else if (component == imageComponent.rectTransform)
+        else if (component == imageComponent[occurrence].rectTransform)
         {
-            if (!storedRotation[1])
+            if (!storedRotation[1][occurrence])
             {
-                startRotation = imageComponent.rectTransform.localRotation;
-                originalRotation[1] = startRotation;
-                storedRotation[1] = true;
+                startRotation = imageComponent[occurrence].rectTransform.localRotation;
+                originalRotation[1][occurrence] = startRotation;
+                storedRotation[1][occurrence] = true;
             }
             else
             {
-                startRotation = originalRotation[1];
+                startRotation = originalRotation[1][occurrence];
             }
         }
         else if (component == panelTransform)
         {
-            if (!storedRotation[2])
+            if (!storedRotation[2][0])
             {
                 startRotation = panelTransform.localRotation;
-                originalRotation[2] = startRotation;
-                storedRotation[2] = true;
+                originalRotation[2][0] = startRotation;
+                storedRotation[2][0] = true;
             }
             else
             {
-                startRotation = originalRotation[2];
+                startRotation = originalRotation[2][0];
             }
         }
 

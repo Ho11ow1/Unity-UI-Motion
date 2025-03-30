@@ -16,37 +16,37 @@ using UnityEngine;
 [AddComponentMenu("")]
 internal class TypeWrite
 {
-    private readonly TextMeshProUGUI textComponent;
+    private readonly TextMeshProUGUI[] textComponent;
     private readonly MonoBehaviour monoBehaviour;
 
-    private readonly string targetText;
-    private readonly int length;
+    private string targetText;
+    private int length;
 
     private const float standardDelay = 0.3f;
     private const float standardDuration = 3f;
 
-    public TypeWrite(TextMeshProUGUI tmp, MonoBehaviour runner)
+    public TypeWrite(TextMeshProUGUI[] tmp, MonoBehaviour runner)
     {
         textComponent = tmp;
         monoBehaviour = runner;
-        targetText = textComponent.text;
-        length = targetText.Length;
     }
 
     // ----------------------------------------------------- PUBLIC API -----------------------------------------------------
 
-    public void TypeWriter(float delay = standardDelay, float duration = standardDuration)
+    public void TypeWriter(int occurrence, float delay = standardDelay, float duration = standardDuration)
     {
-        monoBehaviour.StartCoroutine(TW(delay, duration));
+        targetText = textComponent[occurrence].text;
+        length = targetText.Length;
+        monoBehaviour.StartCoroutine(TW(occurrence, delay, duration));
     }
 
     // ----------------------------------------------------- TYPEWRITER EFFECT -----------------------------------------------------
 
-    private IEnumerator TW(float delay, float duration)
+    private IEnumerator TW(int occurrence, float delay, float duration)
     {
         if (textComponent == null) { yield break; }
 
-        textComponent.text = "";
+        textComponent[occurrence].text = "";
         string currentText = "";
 
         if (duration > 0 && length > 0) { delay = duration / length; }
@@ -54,10 +54,10 @@ internal class TypeWrite
         foreach (char c in targetText)
         {
             currentText += c;
-            textComponent.text = currentText;
+            textComponent[occurrence].text = currentText;
             yield return new WaitForSeconds(delay);
         }
 
-        if (textComponent.text != targetText) { textComponent.text = targetText; }
+        if (textComponent[occurrence].text != targetText) { textComponent[occurrence].text = targetText; }
     }
 }
