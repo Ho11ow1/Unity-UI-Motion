@@ -14,14 +14,12 @@ using UnityEngine;
  * -------------------------------------------------------- */
 
 [AddComponentMenu("")]
-internal class TypeWrite // TODO: Fix component completion to the correct occurence of textComponent[occurrence].text
+internal class TypeWrite
 {
     private readonly TextMeshProUGUI[] textComponent;
     private readonly MonoBehaviour monoBehaviour;
 
-    // private readonly string[] targetArr = new string[10]; Maybe?
-
-    private string targetText;
+    private readonly string[] targetArr = new string[10];
     private int length;
 
     private const float standardDelay = 0.3f;
@@ -37,8 +35,8 @@ internal class TypeWrite // TODO: Fix component completion to the correct occure
 
     public void TypeWriter(int occurrence, float delay = standardDelay, float duration = standardDuration)
     {
-        targetText = textComponent[occurrence].text;
-        length = targetText.Length;
+        targetArr[occurrence] = textComponent[occurrence].text;
+        length = targetArr[occurrence].Length;
         monoBehaviour.StartCoroutine(TW(occurrence, delay, duration));
     }
 
@@ -53,13 +51,13 @@ internal class TypeWrite // TODO: Fix component completion to the correct occure
 
         if (duration > 0 && length > 0) { delay = duration / length; }
 
-        foreach (char c in targetText)
+        foreach (char c in targetArr[occurrence])
         {
             currentText += c;
             textComponent[occurrence].text = currentText;
             yield return new WaitForSeconds(delay);
         }
 
-        if (textComponent[occurrence].text != targetText) { textComponent[occurrence].text = targetText; }
+        if (textComponent[occurrence].text != targetArr[occurrence]) { textComponent[occurrence].text = targetArr[occurrence]; }
     }
 }

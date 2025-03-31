@@ -48,8 +48,12 @@ public class Motion : MonoBehaviour
     private Image[] images;
     private List<Image> imageList = new List<Image>();
 
-    // Global constant
-    protected const float defaultDuration = 0.5f;
+    // Internal constants
+    internal const int textIndex = 0;
+    internal const int imageIndex = 1;
+    internal const int panelIndex = 2;
+
+    private const float defaultDuration = 0.5f;
 
     void Awake()
     {

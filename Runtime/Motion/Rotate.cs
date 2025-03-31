@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+using static Motion;
+
 /* --------------------------------------------------------
  * Unity UI Motion - Rotation Animation Component
  * Created by Hollow1
@@ -22,8 +24,8 @@ internal class Rotate
     private readonly RectTransform panelTransform;
     private readonly MonoBehaviour monoBehaviour;
 
-    private readonly Quaternion[][] originalRotation = new Quaternion[3][] { new Quaternion[10], new Quaternion[10], new Quaternion[10] };
-    private readonly bool[][] storedRotation = new bool[3][] { new bool[10], new bool[10], new bool[10] };
+    private readonly Quaternion[][] originalRotation = { new Quaternion[10], new Quaternion[10], new Quaternion[1] };
+    private readonly bool[][] storedRotation = { new bool[10], new bool[10], new bool[1] };
 
     private const float rotationDuration = 1.5f;
 
@@ -37,20 +39,20 @@ internal class Rotate
 
     // ----------------------------------------------------- PUBLIC API -----------------------------------------------------
 
-    public void Rotation(Motion.TransitionTarget target, int occurrence, float degrees, Motion.EasingType easing = Motion.EasingType.Linear, float duration = rotationDuration, float delay = 0f)
+    public void Rotation(TransitionTarget target, int occurrence, float degrees, EasingType easing = EasingType.Linear, float duration = rotationDuration, float delay = 0f)
     {
         switch (target)
         {
-            case Motion.TransitionTarget.Text:
+            case TransitionTarget.Text:
                 monoBehaviour.StartCoroutine(RotateUi(textComponent[occurrence].rectTransform, occurrence, degrees, duration, delay, easing));
                 break;
-            case Motion.TransitionTarget.Image:
+            case TransitionTarget.Image:
                 monoBehaviour.StartCoroutine(RotateUi(imageComponent[occurrence].rectTransform, occurrence, degrees, duration, delay, easing));
                 break;
-            case Motion.TransitionTarget.Panel:
+            case TransitionTarget.Panel:
                 monoBehaviour.StartCoroutine(RotateUi(panelTransform, occurrence, degrees, duration, delay, easing));
                 break;
-            case Motion.TransitionTarget.All:
+            case TransitionTarget.All:
                 monoBehaviour.StartCoroutine(RotateUi(textComponent[occurrence].rectTransform, occurrence, degrees, duration, delay, easing));
                 monoBehaviour.StartCoroutine(RotateUi(imageComponent[occurrence].rectTransform, occurrence, degrees, duration, delay, easing));
                 monoBehaviour.StartCoroutine(RotateUi(panelTransform, occurrence, degrees, duration, delay, easing));
@@ -60,7 +62,7 @@ internal class Rotate
 
     // ----------------------------------------------------- ROTATE ANIMATION -----------------------------------------------------
 
-    private IEnumerator RotateUi(RectTransform component, int occurrence, float degrees, float duration, float delay, Motion.EasingType easing)
+    private IEnumerator RotateUi(RectTransform component, int occurrence, float degrees, float duration, float delay, EasingType easing)
     {
         if (component == null) { yield break; }
 
@@ -69,41 +71,41 @@ internal class Rotate
 
         if (component == textComponent[occurrence].rectTransform)
         {
-            if (!storedRotation[0][occurrence])
+            if (!storedRotation[textIndex][occurrence])
             {
                 startRotation = textComponent[occurrence].rectTransform.localRotation;
-                originalRotation[0][occurrence] = startRotation;
-                storedRotation[0][occurrence] = true;
+                originalRotation[textIndex][occurrence] = startRotation;
+                storedRotation[textIndex][occurrence] = true;
             }
             else
             {
-                startRotation = originalRotation[0][occurrence];
+                startRotation = originalRotation[textIndex][occurrence];
             }
         }
         else if (component == imageComponent[occurrence].rectTransform)
         {
-            if (!storedRotation[1][occurrence])
+            if (!storedRotation[imageIndex][occurrence])
             {
                 startRotation = imageComponent[occurrence].rectTransform.localRotation;
-                originalRotation[1][occurrence] = startRotation;
-                storedRotation[1][occurrence] = true;
+                originalRotation[imageIndex][occurrence] = startRotation;
+                storedRotation[imageIndex][occurrence] = true;
             }
             else
             {
-                startRotation = originalRotation[1][occurrence];
+                startRotation = originalRotation[imageIndex][occurrence];
             }
         }
         else if (component == panelTransform)
         {
-            if (!storedRotation[2][0])
+            if (!storedRotation[panelIndex][0])
             {
                 startRotation = panelTransform.localRotation;
-                originalRotation[2][0] = startRotation;
-                storedRotation[2][0] = true;
+                originalRotation[panelIndex][0] = startRotation;
+                storedRotation[panelIndex][0] = true;
             }
             else
             {
-                startRotation = originalRotation[2][0];
+                startRotation = originalRotation[panelIndex][0];
             }
         }
 

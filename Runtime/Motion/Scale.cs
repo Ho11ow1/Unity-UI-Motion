@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+using static Motion;
+
 /* --------------------------------------------------------
  * Unity UI Motion - Scale Animation Component
  * Created by Hollow1
@@ -22,8 +24,8 @@ internal class Scale
     private readonly RectTransform panelTransform;
     private readonly MonoBehaviour monoBehaviour;
 
-    private readonly Vector2[][] originalScale = new Vector2[3][] { new Vector2[10], new Vector2[10], new Vector2[10] };
-    private readonly bool[][] storedScale = new bool[3][] { new bool[10], new bool[10], new bool[10] };
+    private readonly Vector2[][] originalScale = { new Vector2[10], new Vector2[10], new Vector2[1] };
+    private readonly bool[][] storedScale = { new bool[10], new bool[10], new bool[1] };
 
     private const float scalingTime = 0.5f;
 
@@ -37,20 +39,20 @@ internal class Scale
 
     // ----------------------------------------------------- PUBLIC API -----------------------------------------------------
 
-    public void ScaleUp(Motion.TransitionTarget target, int occurrence, float multiplier, Motion.EasingType easing = Motion.EasingType.Linear, float duration = scalingTime, float delay = 0f)
+    public void ScaleUp(TransitionTarget target, int occurrence, float multiplier, EasingType easing = EasingType.Linear, float duration = scalingTime, float delay = 0f)
     {
         switch (target)
         {
-            case Motion.TransitionTarget.Text:
+            case TransitionTarget.Text:
                 monoBehaviour.StartCoroutine(ScaleUi(textComponent[occurrence].rectTransform, occurrence, multiplier, duration, delay, easing));
                 break;
-            case Motion.TransitionTarget.Image:
+            case TransitionTarget.Image:
                 monoBehaviour.StartCoroutine(ScaleUi(imageComponent[occurrence].rectTransform, occurrence, multiplier, duration, delay, easing));
                 break;
-            case Motion.TransitionTarget.Panel:
+            case TransitionTarget.Panel:
                 monoBehaviour.StartCoroutine(ScaleUi(panelTransform, occurrence, multiplier, duration, delay, easing));
                 break;
-            case Motion.TransitionTarget.All:
+            case TransitionTarget.All:
                 monoBehaviour.StartCoroutine(ScaleUi(textComponent[occurrence].rectTransform, occurrence, multiplier, duration, delay, easing));
                 monoBehaviour.StartCoroutine(ScaleUi(imageComponent[occurrence].rectTransform, occurrence, multiplier, duration, delay, easing));
                 monoBehaviour.StartCoroutine(ScaleUi(panelTransform, occurrence, multiplier, duration, delay, easing));
@@ -58,20 +60,20 @@ internal class Scale
         }
     }
 
-    public void ScaleDown(Motion.TransitionTarget target, int occurrence, float multiplier, Motion.EasingType easing = Motion.EasingType.Linear, float duration = scalingTime, float delay = 0f)
+    public void ScaleDown(TransitionTarget target, int occurrence, float multiplier, EasingType easing = EasingType.Linear, float duration = scalingTime, float delay = 0f)
     {
         switch (target)
         {
-            case Motion.TransitionTarget.Text:
+            case TransitionTarget.Text:
                 monoBehaviour.StartCoroutine(ScaleUi(textComponent[occurrence].rectTransform, occurrence, 1/ multiplier, duration, delay, easing));
                 break;
-            case Motion.TransitionTarget.Image:
+            case TransitionTarget.Image:
                 monoBehaviour.StartCoroutine(ScaleUi(imageComponent[occurrence].rectTransform, occurrence, 1 / multiplier, duration, delay, easing));
                 break;
-            case Motion.TransitionTarget.Panel:
+            case TransitionTarget.Panel:
                 monoBehaviour.StartCoroutine(ScaleUi(panelTransform, occurrence, 1 / multiplier, duration, delay, easing));
                 break;
-            case Motion.TransitionTarget.All:
+            case TransitionTarget.All:
                 monoBehaviour.StartCoroutine(ScaleUi(textComponent[occurrence].rectTransform, occurrence, 1 / multiplier, duration, delay, easing));
                 monoBehaviour.StartCoroutine(ScaleUi(imageComponent[occurrence].rectTransform, occurrence, 1 / multiplier, duration, delay, easing));
                 monoBehaviour.StartCoroutine(ScaleUi(panelTransform, occurrence, 1 / multiplier, duration, delay, easing));
@@ -81,51 +83,50 @@ internal class Scale
 
     // ----------------------------------------------------- SCALE ANIMATION -----------------------------------------------------
 
-    private IEnumerator ScaleUi(RectTransform component, int occurrence, float scaleAmount, float duration, float delay, Motion.EasingType easing)
+    private IEnumerator ScaleUi(RectTransform component, int occurrence, float scaleAmount, float duration, float delay, EasingType easing)
     {
         if (component == null) { yield break; }
-        // if (scaleAmount <= 0) { throw new ArgumentOutOfRangeException(nameof(scaleAmount), "Scaling amount must be greater than 0"); }
 
         Vector2 startScale = Vector2.zero;
         Vector2 targetScale;
 
         if (component == textComponent[occurrence].rectTransform)
         {
-            if (!storedScale[0][occurrence])
+            if (!storedScale[textIndex][occurrence])
             {
                 startScale = textComponent[occurrence].rectTransform.localScale;
-                originalScale[0][occurrence] = startScale;
-                storedScale[0][occurrence] = true;
+                originalScale[textIndex][occurrence] = startScale;
+                storedScale[textIndex][occurrence] = true;
             }
             else
             {
-                startScale = originalScale[0][occurrence];
+                startScale = originalScale[textIndex][occurrence];
             }
         }
         else if (component == imageComponent[occurrence].rectTransform)
         {
-            if (!storedScale[1][occurrence])
+            if (!storedScale[imageIndex][occurrence])
             {
                 startScale = imageComponent[occurrence].rectTransform.localScale;
-                originalScale[1][occurrence] = startScale;
-                storedScale[1][occurrence] = true;
+                originalScale[imageIndex][occurrence] = startScale;
+                storedScale[imageIndex][occurrence] = true;
             }
             else
             {
-                startScale = originalScale[1][occurrence];
+                startScale = originalScale[imageIndex][occurrence];
             }
         }
         else if (component == panelTransform)
         {
-            if (!storedScale[2][0])
+            if (!storedScale[panelIndex][0])
             {
                 startScale = panelTransform.localScale;
-                originalScale[2][0] = startScale;
-                storedScale[2][0] = true;
+                originalScale[panelIndex][0] = startScale;
+                storedScale[panelIndex][0] = true;
             }
             else
             {
-                startScale = originalScale[2][0];
+                startScale = originalScale[panelIndex][0];
             }
         }
 
