@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+using static Motion;
+
 /* --------------------------------------------------------
  * Unity UI Motion - Rotation Animation Component
  * Created by Hollow1
@@ -17,93 +19,119 @@ using TMPro;
 [AddComponentMenu("")]
 internal class Rotate
 {
-    private readonly TextMeshProUGUI textComponent;
-    private readonly Image imageComponent;
+    private readonly TextMeshProUGUI[] textComponent;
+    private readonly Image[] imageComponent;
+    private readonly Button[] buttonComponent;
     private readonly RectTransform panelTransform;
     private readonly MonoBehaviour monoBehaviour;
 
-    private readonly Quaternion[] originalRotation = { Quaternion.identity, Quaternion.identity, Quaternion.identity };
-    private readonly bool[] storedRotation = { false, false, false };
+    private readonly List<Utils.AutoIncreaseList<Quaternion>> originalRotation = new List<Utils.AutoIncreaseList<Quaternion>>()
+    {
+        new Utils.AutoIncreaseList<Quaternion>(),
+        new Utils.AutoIncreaseList<Quaternion>(),
+        new Utils.AutoIncreaseList<Quaternion>(),
+        new Utils.AutoIncreaseList<Quaternion>()
+    };
+
+    private readonly List<Utils.AutoIncreaseList<bool>> storedRotation = new List<Utils.AutoIncreaseList<bool>>()
+    {
+        new Utils.AutoIncreaseList<bool>(),
+        new Utils.AutoIncreaseList<bool>(),
+        new Utils.AutoIncreaseList<bool>(),
+        new Utils.AutoIncreaseList<bool>()
+    };
 
     private const float rotationDuration = 1.5f;
 
-    public Rotate(TextMeshProUGUI text, Image image, RectTransform panel, MonoBehaviour runner)
+    public Rotate(TextMeshProUGUI[] text, Image[] image, Button[] button, RectTransform panel, MonoBehaviour runner)
     {
         textComponent = text;
         imageComponent = image;
+        buttonComponent = button;
         panelTransform = panel;
         monoBehaviour = runner;
     }
 
     // ----------------------------------------------------- PUBLIC API -----------------------------------------------------
 
-    public void Rotation(Motion.TransitionTarget target, float degrees, Motion.EasingType easing = Motion.EasingType.Linear, float duration = rotationDuration, float delay = 0f)
+    public void Rotation(TransitionTarget target, int occurrence, float degrees, EasingType easing = EasingType.Linear, float duration = rotationDuration, float delay = 0f)
     {
         switch (target)
         {
-            case Motion.TransitionTarget.Text:
-                monoBehaviour.StartCoroutine(RotateUi(textComponent.rectTransform, degrees, duration, delay, easing));
+            case TransitionTarget.Panel:
+                monoBehaviour.StartCoroutine(RotateUi(panelTransform, occurrence, degrees, duration, delay, easing));
                 break;
-            case Motion.TransitionTarget.Image:
-                monoBehaviour.StartCoroutine(RotateUi(imageComponent.rectTransform, degrees, duration, delay, easing));
+            case TransitionTarget.Text:
+                monoBehaviour.StartCoroutine(RotateUi(textComponent[occurrence].rectTransform, occurrence, degrees, duration, delay, easing));
                 break;
-            case Motion.TransitionTarget.Panel:
-                monoBehaviour.StartCoroutine(RotateUi(panelTransform, degrees, duration, delay, easing));
+            case TransitionTarget.Image:
+                monoBehaviour.StartCoroutine(RotateUi(imageComponent[occurrence].rectTransform, occurrence, degrees, duration, delay, easing));
                 break;
-            case Motion.TransitionTarget.All:
-                monoBehaviour.StartCoroutine(RotateUi(textComponent.rectTransform, degrees, duration, delay, easing));
-                monoBehaviour.StartCoroutine(RotateUi(imageComponent.rectTransform, degrees, duration, delay, easing));
-                monoBehaviour.StartCoroutine(RotateUi(panelTransform, degrees, duration, delay, easing));
+            case TransitionTarget.Button:
+                monoBehaviour.StartCoroutine(RotateUi((RectTransform)buttonComponent[occurrence].transform, occurrence, degrees, duration, delay, easing));
                 break;
         }
     }
 
     // ----------------------------------------------------- ROTATE ANIMATION -----------------------------------------------------
 
-    private IEnumerator RotateUi(RectTransform component, float degrees, float duration, float delay, Motion.EasingType easing)
+    private IEnumerator RotateUi(RectTransform component, int occurrence, float degrees, float duration, float delay, EasingType easing)
     {
         if (component == null) { yield break; }
 
         Quaternion startRotation = Quaternion.identity; 
         Quaternion targetRotation;
 
-        if (component == textComponent.rectTransform)
+        if (component == panelTransform)
         {
-            if (!storedRotation[0])
-            {
-                startRotation = textComponent.rectTransform.localRotation;
-                originalRotation[0] = startRotation;
-                storedRotation[0] = true;
-            }
-            else
-            {
-                startRotation = originalRotation[0];
-            }
-        }
-        else if (component == imageComponent.rectTransform)
-        {
-            if (!storedRotation[1])
-            {
-                startRotation = imageComponent.rectTransform.localRotation;
-                originalRotation[1] = startRotation;
-                storedRotation[1] = true;
-            }
-            else
-            {
-                startRotation = originalRotation[1];
-            }
-        }
-        else if (component == panelTransform)
-        {
-            if (!storedRotation[2])
+            if (!storedRotation[panelIndex][0])
             {
                 startRotation = panelTransform.localRotation;
-                originalRotation[2] = startRotation;
-                storedRotation[2] = true;
+                originalRotation[panelIndex][0] = startRotation;
+                storedRotation[panelIndex][0] = true;
             }
             else
             {
-                startRotation = originalRotation[2];
+                startRotation = originalRotation[panelIndex][0];
+            }
+        }
+        else if (component == textComponent[occurrence].rectTransform)
+        {
+            if (!storedRotation[textIndex][occurrence])
+            {
+                startRotation = textComponent[occurrence].rectTransform.localRotation;
+                originalRotation[textIndex][occurrence] = startRotation;
+                storedRotation[textIndex][occurrence] = true;
+            }
+            else
+            {
+                startRotation = originalRotation[textIndex][occurrence];
+            }
+        }
+        else if (component == imageComponent[occurrence].rectTransform)
+        {
+            if (!storedRotation[imageIndex][occurrence])
+            {
+                startRotation = imageComponent[occurrence].rectTransform.localRotation;
+                originalRotation[imageIndex][occurrence] = startRotation;
+                storedRotation[imageIndex][occurrence] = true;
+            }
+            else
+            {
+                startRotation = originalRotation[imageIndex][occurrence];
+            }
+        }
+        else if (component == (RectTransform)buttonComponent[occurrence].transform)
+        {
+            if (!storedRotation[buttonIndex][occurrence])
+            {
+                startRotation = buttonComponent[occurrence].transform.localRotation;
+                originalRotation[buttonIndex][occurrence] = startRotation;
+                storedRotation[buttonIndex][occurrence] = true;
+            }
+            else
+            {
+                startRotation = originalRotation[buttonIndex][occurrence];
             }
         }
 
@@ -114,7 +142,7 @@ internal class Rotate
         while (elapsedTime < duration)
         {
             float time = elapsedTime / duration;
-            float easedTime = Easing.SetEasingFunction(time, easing);
+            float easedTime = Utils.Easing.SetEasingFunction(time, easing);
 
             component.localRotation = Quaternion.Lerp(startRotation, targetRotation, easedTime);
             elapsedTime += Time.deltaTime;
