@@ -35,7 +35,7 @@ A lightweight and flexible UI animation system for Unity that provides smooth tr
 ### Option 1: Manual Installation
 1. Download the project from this repository
 2. Add the unzipped folder to your Assets folder
-3. Attach the appropriate component (`Motion.cs` or `Listifier.cs`) to your gameObject
+3. Attach the appropriate component (`Motion.cs` or `Listifier.cs`) to a UI Panel
 
 ### Option 2: Unity Package Manager
 1. In Unity, go to Window > Package Manager
@@ -81,11 +81,12 @@ public class Example : MonoBehaviour
         // listifier.Rowify(menuList, 150);
 
         // Seperate functions
-        panelListifier.SetNavigation(Listifier.ListDirection.Vertical); // Use the appropriate ListDirection based on Listify or Rowify
-        panelListifier.SetButtonEvents(Example, Example, Example, Example, Example, Example);
+        // Use the appropriate direction based on Listify / Rowify
+        panelListifier.SetNavigation(Listifier.ListDirection.Vertical);
+        panelListifier.SetButtonEvents(Log, Log, Log, Log, Log, Log);
 
         // Single combined function
-        // panelListifier.SetNavigationWithEvents(Listifier.ListDirection.Vertical, Example, Example, Example, Example, Example, Example);
+        // panelListifier.SetNavigationWithEvents()
 
         objectList = panelListifier.GetObjectList();
         eventSystem.SetSelectedGameObject(objectList[0]);
@@ -93,8 +94,8 @@ public class Example : MonoBehaviour
 
     public void ShowPopup()
     {
-        panelMotion.FadeIn(0, 0.75f);
-        panelMotion.TransitionFromLeft(Motion.TransitionTarget.Panel, 100, Motion.EasingType.EaseIn);
+        panelMotion.FadeIn(0f, 0.75f);
+        panelMotion.TransitionFromLeft(Motion.TransitionTarget.Image, 1, 50f, Motion.EasingType.EaseIn, 1.5f);
     }
 
     public void HidePopup()
@@ -102,12 +103,12 @@ public class Example : MonoBehaviour
         panelMotion.FadeOut(0f, 1f);
     }
 
-    private void Example()
+    private void Log()
     {
         Debug.Log("Button pressed");
     }
 
-
+    
 }
 
 ```

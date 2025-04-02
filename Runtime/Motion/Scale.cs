@@ -21,18 +21,33 @@ internal class Scale
 {
     private readonly TextMeshProUGUI[] textComponent;
     private readonly Image[] imageComponent;
+    private readonly Button[] buttonComponent;
     private readonly RectTransform panelTransform;
     private readonly MonoBehaviour monoBehaviour;
 
-    private readonly Vector2[][] originalScale = { new Vector2[10], new Vector2[10], new Vector2[1] };
-    private readonly bool[][] storedScale = { new bool[10], new bool[10], new bool[1] };
+    private readonly List<Utils.AutoIncreaseList<Vector2>> originalScale = new List<Utils.AutoIncreaseList<Vector2>>()
+    {
+        new Utils.AutoIncreaseList<Vector2>(),
+        new Utils.AutoIncreaseList<Vector2>(),
+        new Utils.AutoIncreaseList<Vector2>(),
+        new Utils.AutoIncreaseList<Vector2>()
+    };
+
+    private readonly List<Utils.AutoIncreaseList<bool>> storedScale = new List<Utils.AutoIncreaseList<bool>>()
+    {
+        new Utils.AutoIncreaseList<bool>(),
+        new Utils.AutoIncreaseList<bool>(),
+        new Utils.AutoIncreaseList<bool>(),
+        new Utils.AutoIncreaseList<bool>()
+    };
 
     private const float scalingTime = 0.5f;
 
-    public Scale(TextMeshProUGUI[] text, Image[] image, RectTransform panel, MonoBehaviour runner)
+    public Scale(TextMeshProUGUI[] text, Image[] image, Button[] button, RectTransform panel, MonoBehaviour runner)
     {
         textComponent = text;
         imageComponent = image;
+        buttonComponent = button;
         panelTransform = panel;
         monoBehaviour = runner;
     }
@@ -43,19 +58,17 @@ internal class Scale
     {
         switch (target)
         {
+            case TransitionTarget.Panel:
+                monoBehaviour.StartCoroutine(ScaleUi(panelTransform, occurrence, multiplier, duration, delay, easing));
+                break;
             case TransitionTarget.Text:
                 monoBehaviour.StartCoroutine(ScaleUi(textComponent[occurrence].rectTransform, occurrence, multiplier, duration, delay, easing));
                 break;
             case TransitionTarget.Image:
                 monoBehaviour.StartCoroutine(ScaleUi(imageComponent[occurrence].rectTransform, occurrence, multiplier, duration, delay, easing));
                 break;
-            case TransitionTarget.Panel:
-                monoBehaviour.StartCoroutine(ScaleUi(panelTransform, occurrence, multiplier, duration, delay, easing));
-                break;
-            case TransitionTarget.All:
-                monoBehaviour.StartCoroutine(ScaleUi(textComponent[occurrence].rectTransform, occurrence, multiplier, duration, delay, easing));
-                monoBehaviour.StartCoroutine(ScaleUi(imageComponent[occurrence].rectTransform, occurrence, multiplier, duration, delay, easing));
-                monoBehaviour.StartCoroutine(ScaleUi(panelTransform, occurrence, multiplier, duration, delay, easing));
+            case TransitionTarget.Button:
+                monoBehaviour.StartCoroutine(ScaleUi((RectTransform)buttonComponent[occurrence].transform, occurrence, multiplier, duration, delay, easing));
                 break;
         }
     }
@@ -64,19 +77,17 @@ internal class Scale
     {
         switch (target)
         {
+            case TransitionTarget.Panel:
+                monoBehaviour.StartCoroutine(ScaleUi(panelTransform, occurrence, 1 / multiplier, duration, delay, easing));
+                break;
             case TransitionTarget.Text:
                 monoBehaviour.StartCoroutine(ScaleUi(textComponent[occurrence].rectTransform, occurrence, 1/ multiplier, duration, delay, easing));
                 break;
             case TransitionTarget.Image:
                 monoBehaviour.StartCoroutine(ScaleUi(imageComponent[occurrence].rectTransform, occurrence, 1 / multiplier, duration, delay, easing));
                 break;
-            case TransitionTarget.Panel:
-                monoBehaviour.StartCoroutine(ScaleUi(panelTransform, occurrence, 1 / multiplier, duration, delay, easing));
-                break;
-            case TransitionTarget.All:
-                monoBehaviour.StartCoroutine(ScaleUi(textComponent[occurrence].rectTransform, occurrence, 1 / multiplier, duration, delay, easing));
-                monoBehaviour.StartCoroutine(ScaleUi(imageComponent[occurrence].rectTransform, occurrence, 1 / multiplier, duration, delay, easing));
-                monoBehaviour.StartCoroutine(ScaleUi(panelTransform, occurrence, 1 / multiplier, duration, delay, easing));
+            case TransitionTarget.Button:
+                monoBehaviour.StartCoroutine(ScaleUi((RectTransform)buttonComponent[occurrence].transform, occurrence, 1 / multiplier, duration, delay, easing));
                 break;
         }
     }
@@ -90,7 +101,21 @@ internal class Scale
         Vector2 startScale = Vector2.zero;
         Vector2 targetScale;
 
-        if (component == textComponent[occurrence].rectTransform)
+
+        if (component == panelTransform)
+        {
+            if (!storedScale[panelIndex][0])
+            {
+                startScale = panelTransform.localScale;
+                originalScale[panelIndex][0] = startScale;
+                storedScale[panelIndex][0] = true;
+            }
+            else
+            {
+                startScale = originalScale[panelIndex][0];
+            }
+        }
+        else if (component == textComponent[occurrence].rectTransform)
         {
             if (!storedScale[textIndex][occurrence])
             {
@@ -116,17 +141,17 @@ internal class Scale
                 startScale = originalScale[imageIndex][occurrence];
             }
         }
-        else if (component == panelTransform)
+        else if (component == (RectTransform)buttonComponent[occurrence].transform)
         {
-            if (!storedScale[panelIndex][0])
+            if (!storedScale[buttonIndex][occurrence])
             {
-                startScale = panelTransform.localScale;
-                originalScale[panelIndex][0] = startScale;
-                storedScale[panelIndex][0] = true;
+                startScale = buttonComponent[occurrence].transform.localScale;
+                originalScale[buttonIndex][occurrence] = startScale;
+                storedScale[buttonIndex][occurrence] = true;
             }
             else
             {
-                startScale = originalScale[panelIndex][0];
+                startScale = originalScale[buttonIndex][occurrence];
             }
         }
 
@@ -137,7 +162,7 @@ internal class Scale
         while (elapsedTime < duration)
         {
             float time = elapsedTime / duration;
-            float easedTime = Easing.SetEasingFunction(time, easing);
+            float easedTime = Utils.Easing.SetEasingFunction(time, easing);
 
             component.localScale = Vector2.Lerp(startScale, targetScale, easedTime);
             elapsedTime += Time.deltaTime;

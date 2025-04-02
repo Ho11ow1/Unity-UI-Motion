@@ -19,10 +19,10 @@ public class Motion : MonoBehaviour
 {
     public enum TransitionTarget
     {
+        Panel,
         Text,
         Image,
-        Panel,
-        All
+        Button
     }
 
     public enum EasingType
@@ -42,16 +42,18 @@ public class Motion : MonoBehaviour
     private TypeWrite typeWriterComponent;
 
     // Component variables
-    private RectTransform panel;
     private CanvasGroup cg;
+    private RectTransform panel;
     private TextMeshProUGUI[] texts;
     private Image[] images;
+    private Button[] buttons;
     private List<Image> imageList = new List<Image>();
 
     // Internal constants
-    internal const int textIndex = 0;
-    internal const int imageIndex = 1;
-    internal const int panelIndex = 2;
+    internal const int panelIndex = 0;
+    internal const int textIndex = 1;
+    internal const int imageIndex = 2;
+    internal const int buttonIndex = 3;
 
     private const float defaultDuration = 0.5f;
 
@@ -71,19 +73,22 @@ public class Motion : MonoBehaviour
         }
         images = imageList.ToArray();
 
+        buttons = GetComponentsInChildren<Button>();
+
         panel = GetComponent<RectTransform>();
 
         #if UNITY_EDITOR
         if (cg == null) { Debug.LogWarning($"[{gameObject.name}] No CanvasGroup component found, added automatically."); }
         if (texts == null) { Debug.LogWarning($"[{gameObject.name}] No Text component found in children. Parent: [{transform.parent.name ?? "none"}]"); }
         if (images == null) { Debug.LogWarning($"[{gameObject.name}] No Image component found in children. Parent: [{transform.parent.name ?? "none"}]"); }
+        if (buttons == null) { Debug.LogWarning($"[{gameObject.name}] No Button component found in children. Parent: [{transform.parent.name ?? "none"}]"); }
         if (panel == null) { Debug.LogWarning($"[{gameObject.name}] No RectTransform component found."); }
         #endif
 
         fadeComponent = new Fade(cg, this);
-        transitionComponent = new Transition(texts, images, panel, this);
-        scalingComponent = new Scale(texts, images, panel, this);
-        rotationComponent = new Rotate(texts, images, panel, this);
+        transitionComponent = new Transition(texts, images, buttons, panel, this);
+        scalingComponent = new Scale(texts, images, buttons, panel, this);
+        rotationComponent = new Rotate(texts, images, buttons, panel, this);
         typeWriterComponent = new TypeWrite(texts, this);
     }
 
@@ -130,7 +135,8 @@ public class Motion : MonoBehaviour
     /// <summary>
     /// Transitions the UI element from a position offset upward back to its starting position
     /// </summary>
-    /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
+    /// <param name="target">Target component to transition (Panel, Text, Image, Button)</param>
+    /// <param name="occurrence">Specifies the instance of the target element</param>
     /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). Positive values move the element up</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
@@ -144,7 +150,8 @@ public class Motion : MonoBehaviour
     /// <summary>
     /// Transitions the UI element from a position offset downward back to its starting position
     /// </summary>
-    /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
+    /// <param name="target">Target component to transition (Panel, Text, Image, Button)</param>
+    /// <param name="occurrence">Specifies the instance of the target element</param>
     /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). Positive values move the element down</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
@@ -158,7 +165,8 @@ public class Motion : MonoBehaviour
     /// <summary>
     /// Transitions the UI element from a position offset to the left back to its starting position
     /// </summary>
-    /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
+    /// <param name="target">Target component to transition (Panel, Text, Image, Button)</param>
+    /// <param name="occurrence">Specifies the instance of the target element</param>
     /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). Positive values move the element to the left</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
@@ -172,7 +180,8 @@ public class Motion : MonoBehaviour
     /// <summary>
     /// Transitions the UI element from a position offset to the right back to its starting position
     /// </summary>
-    /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
+    /// <param name="target">Target component to transition (Panel, Text, Image, Button)</param>
+    /// <param name="occurrence">Specifies the instance of the target element</param>
     /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). Positive values move the element to the right</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
@@ -186,7 +195,8 @@ public class Motion : MonoBehaviour
     /// <summary>
     /// Transitions the UI element from an offset position on both axes back to its starting position
     /// </summary>
-    /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
+    /// <param name="target">Target component to transition (Panel, Text, Image, Button)</param>
+    /// <param name="occurrence">Specifies the instance of the target element</param>
     /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). determines the starting offset position to animate from, Positive values offset right and up</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
@@ -200,7 +210,8 @@ public class Motion : MonoBehaviour
     /// <summary>
     /// Transitions the UI element from its starting position to a position offset upward
     /// </summary>
-    /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
+    /// <param name="target">Target component to transition (Panel, Text, Image, Button)</param>
+    /// <param name="occurrence">Specifies the instance of the target element</param>
     /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). Positive values move the element up</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
@@ -214,7 +225,8 @@ public class Motion : MonoBehaviour
     /// <summary>
     /// Transitions the UI element from its starting position to a position offset downward
     /// </summary>
-    /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
+    /// <param name="target">Target component to transition (Panel, Text, Image, Button)</param>
+    /// <param name="occurrence">Specifies the instance of the target element</param>
     /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). Positive values move the element down</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
@@ -228,7 +240,8 @@ public class Motion : MonoBehaviour
     /// <summary>
     /// Transitions the UI element from its starting position to a position offset to the left
     /// </summary>
-    /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
+    /// <param name="target">Target component to transition (Panel, Text, Image, Button)</param>
+    /// <param name="occurrence">Specifies the instance of the target element</param>
     /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). Positive values move the element to the left</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
@@ -242,7 +255,8 @@ public class Motion : MonoBehaviour
     /// <summary>
     /// Transitions the UI element from its starting position to a position offset to the right
     /// </summary>
-    /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
+    /// <param name="target">Target component to transition (Panel, Text, Image, Button)</param>
+    /// <param name="occurrence">Specifies the instance of the target element</param>
     /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). Positive values move the element to the right</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
@@ -256,7 +270,8 @@ public class Motion : MonoBehaviour
     /// <summary>
     /// Transitions the UI element from its starting position to an offset position
     /// </summary>
-    /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
+    /// <param name="target">Target component to transition (Panel, Text, Image, Button)</param>
+    /// <param name="occurrence">Specifies the instance of the target element</param>
     /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). determines the final offset position to animate to, Positive values offset right and up</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
@@ -272,7 +287,8 @@ public class Motion : MonoBehaviour
     /// <summary>
     /// Rotate the UI element with a custom delay and duration
     /// </summary>
-    /// <param name="target">Target component to transition (Text, Image, Panel, or All)</param>
+    /// <param name="target">Target component to transition (Panel, Text, Image, Button)</param>
+    /// <param name="occurrence">Specifies the instance of the target element</param>
     /// <param name="degrees">Degrees the rotation should rotate, positive values go counter-clockwise, negative clockwise</param>
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the rotation duration</param>
@@ -288,7 +304,8 @@ public class Motion : MonoBehaviour
     /// <summary>
     /// Scales up the UI element with a custom delay and duration
     /// </summary>
-    /// <param name="target">Target component to scale (Text, Image, Panel, or All)</param>
+    /// <param name="target">Target component to scale (Panel, Text, Image, Button)</param>
+    /// <param name="occurrence">Specifies the instance of the target element</param>
     /// <param name="multiplier">Scale multiplier. Values greater than 1 increase size, must be greater than 0. (Scale is based on the local scale of the parent)</param>
     /// <param name="easing">Specifies the easing method the scaling should use</param>
     /// <param name="duration">Time in seconds the scaling animation should take</param>
@@ -302,7 +319,8 @@ public class Motion : MonoBehaviour
     /// <summary>
     /// Scales down the UI element with a custom delay and duration
     /// </summary>
-    /// <param name="target">Target component to scale (Text, Image, Panel, or All)</param>
+    /// <param name="target">Target component to scale (Panel, Text, Image, Button)</param>
+    /// <param name="occurrence">Specifies the instance of the target element</param>
     /// <param name="multiplier">Scale multiplier. Values greater than 1 decrease size, must be greater than 0. (Scale is based on the local scale of the parent)</param>
     /// <param name="easing">Specifies the easing method the scaling should use</param>
     /// <param name="duration">Time in seconds the scaling animation should take</param>
@@ -318,6 +336,7 @@ public class Motion : MonoBehaviour
     /// <summary>
     /// Applies a typeWriter effect to the TextMeshPro component with a custom delay and duration
     /// </summary>
+    /// <param name="occurrence">Specifies the instance of the target element</param>
     /// <param name="delay">Time in seconds for the delay per character</param>
     /// <param name="duration">Time in seconds for the entire text to animate</param>
     public void TypeWrite(int occurrence, float delay = 0.3f, float duration = 3f)
@@ -325,26 +344,6 @@ public class Motion : MonoBehaviour
         occurrence -= 1;
         typeWriterComponent.TypeWriter(occurrence, delay, duration);
     }
-}
 
-internal static class Easing
-{
-    internal static float SetEasingFunction(float time, Motion.EasingType easing)
-    {
-        switch (easing)
-        {
-            case Motion.EasingType.Linear:
-                return time;
-            case Motion.EasingType.Cubic:
-                return time * time * time;
-            case Motion.EasingType.EaseIn:
-                return time * time;
-            case Motion.EasingType.EaseOut:
-                return time * (2 - time);
-            case Motion.EasingType.EaseInOut:
-                return time < 0.5f ? 2 * time * time : -1 + (4 - 2 * time) * time;
-            default:
-                return time;
-        }
-    }
+
 }

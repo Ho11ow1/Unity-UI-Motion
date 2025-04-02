@@ -19,7 +19,7 @@ internal class TypeWrite
     private readonly TextMeshProUGUI[] textComponent;
     private readonly MonoBehaviour monoBehaviour;
 
-    private readonly string[] targetArr = new string[10];
+    private readonly Utils.StringAutoIncreaseList targetString = new Utils.StringAutoIncreaseList();
     private int length;
 
     private const float standardDelay = 0.3f;
@@ -35,14 +35,14 @@ internal class TypeWrite
 
     public void TypeWriter(int occurrence, float delay = standardDelay, float duration = standardDuration)
     {
-        targetArr[occurrence] = textComponent[occurrence].text;
-        length = targetArr[occurrence].Length;
-        monoBehaviour.StartCoroutine(TW(occurrence, delay, duration));
+        targetString[occurrence] = textComponent[occurrence].text;
+        length = targetString[occurrence].Length;
+        monoBehaviour.StartCoroutine(Writer(occurrence, delay, duration));
     }
 
     // ----------------------------------------------------- TYPEWRITER EFFECT -----------------------------------------------------
 
-    private IEnumerator TW(int occurrence, float delay, float duration)
+    private IEnumerator Writer(int occurrence, float delay, float duration)
     {
         if (textComponent == null) { yield break; }
 
@@ -51,13 +51,13 @@ internal class TypeWrite
 
         if (duration > 0 && length > 0) { delay = duration / length; }
 
-        foreach (char c in targetArr[occurrence])
+        foreach (char c in targetString[occurrence])
         {
             currentText += c;
             textComponent[occurrence].text = currentText;
             yield return new WaitForSeconds(delay);
         }
 
-        if (textComponent[occurrence].text != targetArr[occurrence]) { textComponent[occurrence].text = targetArr[occurrence]; }
+        if (textComponent[occurrence].text != targetString[occurrence]) { textComponent[occurrence].text = targetString[occurrence]; }
     }
 }

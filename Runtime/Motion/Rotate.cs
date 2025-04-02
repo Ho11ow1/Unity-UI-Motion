@@ -21,18 +21,33 @@ internal class Rotate
 {
     private readonly TextMeshProUGUI[] textComponent;
     private readonly Image[] imageComponent;
+    private readonly Button[] buttonComponent;
     private readonly RectTransform panelTransform;
     private readonly MonoBehaviour monoBehaviour;
 
-    private readonly Quaternion[][] originalRotation = { new Quaternion[10], new Quaternion[10], new Quaternion[1] };
-    private readonly bool[][] storedRotation = { new bool[10], new bool[10], new bool[1] };
+    private readonly List<Utils.AutoIncreaseList<Quaternion>> originalRotation = new List<Utils.AutoIncreaseList<Quaternion>>()
+    {
+        new Utils.AutoIncreaseList<Quaternion>(),
+        new Utils.AutoIncreaseList<Quaternion>(),
+        new Utils.AutoIncreaseList<Quaternion>(),
+        new Utils.AutoIncreaseList<Quaternion>()
+    };
+
+    private readonly List<Utils.AutoIncreaseList<bool>> storedRotation = new List<Utils.AutoIncreaseList<bool>>()
+    {
+        new Utils.AutoIncreaseList<bool>(),
+        new Utils.AutoIncreaseList<bool>(),
+        new Utils.AutoIncreaseList<bool>(),
+        new Utils.AutoIncreaseList<bool>()
+    };
 
     private const float rotationDuration = 1.5f;
 
-    public Rotate(TextMeshProUGUI[] text, Image[] image, RectTransform panel, MonoBehaviour runner)
+    public Rotate(TextMeshProUGUI[] text, Image[] image, Button[] button, RectTransform panel, MonoBehaviour runner)
     {
         textComponent = text;
         imageComponent = image;
+        buttonComponent = button;
         panelTransform = panel;
         monoBehaviour = runner;
     }
@@ -43,19 +58,17 @@ internal class Rotate
     {
         switch (target)
         {
+            case TransitionTarget.Panel:
+                monoBehaviour.StartCoroutine(RotateUi(panelTransform, occurrence, degrees, duration, delay, easing));
+                break;
             case TransitionTarget.Text:
                 monoBehaviour.StartCoroutine(RotateUi(textComponent[occurrence].rectTransform, occurrence, degrees, duration, delay, easing));
                 break;
             case TransitionTarget.Image:
                 monoBehaviour.StartCoroutine(RotateUi(imageComponent[occurrence].rectTransform, occurrence, degrees, duration, delay, easing));
                 break;
-            case TransitionTarget.Panel:
-                monoBehaviour.StartCoroutine(RotateUi(panelTransform, occurrence, degrees, duration, delay, easing));
-                break;
-            case TransitionTarget.All:
-                monoBehaviour.StartCoroutine(RotateUi(textComponent[occurrence].rectTransform, occurrence, degrees, duration, delay, easing));
-                monoBehaviour.StartCoroutine(RotateUi(imageComponent[occurrence].rectTransform, occurrence, degrees, duration, delay, easing));
-                monoBehaviour.StartCoroutine(RotateUi(panelTransform, occurrence, degrees, duration, delay, easing));
+            case TransitionTarget.Button:
+                monoBehaviour.StartCoroutine(RotateUi((RectTransform)buttonComponent[occurrence].transform, occurrence, degrees, duration, delay, easing));
                 break;
         }
     }
@@ -69,7 +82,20 @@ internal class Rotate
         Quaternion startRotation = Quaternion.identity; 
         Quaternion targetRotation;
 
-        if (component == textComponent[occurrence].rectTransform)
+        if (component == panelTransform)
+        {
+            if (!storedRotation[panelIndex][0])
+            {
+                startRotation = panelTransform.localRotation;
+                originalRotation[panelIndex][0] = startRotation;
+                storedRotation[panelIndex][0] = true;
+            }
+            else
+            {
+                startRotation = originalRotation[panelIndex][0];
+            }
+        }
+        else if (component == textComponent[occurrence].rectTransform)
         {
             if (!storedRotation[textIndex][occurrence])
             {
@@ -95,17 +121,17 @@ internal class Rotate
                 startRotation = originalRotation[imageIndex][occurrence];
             }
         }
-        else if (component == panelTransform)
+        else if (component == (RectTransform)buttonComponent[occurrence].transform)
         {
-            if (!storedRotation[panelIndex][0])
+            if (!storedRotation[buttonIndex][occurrence])
             {
-                startRotation = panelTransform.localRotation;
-                originalRotation[panelIndex][0] = startRotation;
-                storedRotation[panelIndex][0] = true;
+                startRotation = buttonComponent[occurrence].transform.localRotation;
+                originalRotation[buttonIndex][occurrence] = startRotation;
+                storedRotation[buttonIndex][occurrence] = true;
             }
             else
             {
-                startRotation = originalRotation[panelIndex][0];
+                startRotation = originalRotation[buttonIndex][occurrence];
             }
         }
 
@@ -116,7 +142,7 @@ internal class Rotate
         while (elapsedTime < duration)
         {
             float time = elapsedTime / duration;
-            float easedTime = Easing.SetEasingFunction(time, easing);
+            float easedTime = Utils.Easing.SetEasingFunction(time, easing);
 
             component.localRotation = Quaternion.Lerp(startRotation, targetRotation, easedTime);
             elapsedTime += Time.deltaTime;
