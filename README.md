@@ -5,71 +5,120 @@ A lightweight and flexible UI animation system for Unity that provides smooth tr
 ## Features
 
 - **Fade Animations**
-  - Smooth fade in/out transitions
-  - Customizable duration and delay
-  - Instant visibility toggling
   - Zero-configuration setup with CanvasGroup
+  - Customizable duration and delay
 
 - **Position Transitions** 
-  - Support for all 4 directions (Up, Down, Left, Right) + diagonal
+  - Omnidirectional movement
   - Multiple easing functions
   - Flexible component targeting
-  - Customization options:
-    - Configurable offset distance
-    - Adjustable animation duration
-    - Optional animation delay
-    - Custom position vectors
+
+- **Scale Transformations**
+  - Smooth scaling animations
+  - Configurable scale multiplier
+
+- **Rotation Animations**
+  - Precise rotation control in degrees
+  - Multiple easing options
+  - Configurable duration and delay
+
+- **Text Effects**
+  - Dynamic TypeWriter text animation
+  - Customizable typing speed
+  - Configurable start delay
+
+- **Button menu creation**
+  - Explicit navigation
+  - Vertical or horizontal layouts
+  - Automatic button hover effects
 
 ## Installation
 
 ### Option 1: Manual Installation
-1. Download the `Fade.cs` and `Transition.cs` scripts from this repository
-2. Add them to your Unity project's Assets folder
-3. Ensure your UI element has a CanvasGroup component attached(`Fade.cs`)
+1. Download the project from this repository
+2. Add the unzipped folder to your Assets folder
+3. Attach the appropriate component (`Motion.cs` or `Listifier.cs`) to a UI Panel
 
 ### Option 2: Unity Package Manager
 1. In Unity, go to Window > Package Manager
 2. Click the + button and select "Add package from git URL..."
 3. Enter: ```https://github.com/Ho11ow1/Unity-UI-Motion.git```
 
-## Quick Start
-
-### Fade Animations
+## Usage
 
 ```csharp
-// Get the Fade component from your UI element
-var fade = GetComponent<Fade>();
+public class Example : MonoBehaviour
+{
+    [SerializeField] GameObject panel;
+    private EventSystem eventSystem;
 
-// Fade in with default duration (0.5s)
-fade.FadeIn();
+    private Motion panelMotion;
+    private Listifier panelListifier;
 
-// Fade out with custom duration and delay
-fade.FadeOut(delay: 1.0f, duration: 0.3f);
-```
+    private List<GameObject> objectList;
 
-### Position Transitions
+    void Awake()
+    {
+        panel.SetActive(true);
 
-```csharp
-// Get the Transition component from your UI element
-var transition = GetComponent<Transition>();
+        panelMotion = panel.GetComponent<Motion>();
+        panelListifier = panel.GetComponent<Listifier>();
+        eventSystem = FindAnyObjectByType<EventSystem>();
 
-// Slide in from right to left
-transition.TransitionLeft(target: Transition.TransitionTarget.Text, offset: 100f);
+        panelMotion.TurnInvisible();
+    }
 
-// Diagonal slide in from bottom right
-transition.TransitionPosition(
-    target: Transition.TransitionTarget.Text,
-    offset: new Vector2(2, -2),
-    easing: EasingType.EaseInOut,
-    duration: 0.3f,
-    delay: 0.5f
-);
+    void Start()
+    {
+        var menuList = new List<KeyValuePair<string, string>>
+        {
+            new KeyValuePair<string, string>("Title", "Example description"),
+            new KeyValuePair<string, string>("Longer title", "Longer example description"),
+            new KeyValuePair<string, string>("Exit game", "Short example")
+        };
+        // Create a vertical list with 100 pixel spacing
+        panelListifier.Listify(menuList, 100);
+
+        // Or create a horizontal list with 150 pixel spacing
+        // listifier.Rowify(menuList, 150);
+
+        // Seperate functions
+        // Use the appropriate direction based on Listify / Rowify
+        panelListifier.SetNavigation(Listifier.ListDirection.Vertical);
+        panelListifier.SetButtonEvents(Log, Log, Log, Log, Log, Log);
+
+        // Single combined function
+        // panelListifier.SetNavigationWithEvents()
+
+        objectList = panelListifier.GetObjectList();
+        eventSystem.SetSelectedGameObject(objectList[0]);
+    }
+
+    public void ShowPopup()
+    {
+        panelMotion.FadeIn(0f, 0.75f);
+        panelMotion.TransitionFromLeft(Motion.TransitionTarget.Image, 1, 50f, Motion.EasingType.EaseIn, 1.5f);
+    }
+
+    public void HidePopup()
+    {
+        panelMotion.FadeOut(0f, 1f);
+    }
+
+    private void Log()
+    {
+        Debug.Log("Button pressed");
+    }
+
+
+}
+
 ```
 
 ## Requirements
 
 - Unity 2022.3 or higher
-- TextMeshPro package (for text transitions)
+- TextMeshPro package
 
 ## License
 
