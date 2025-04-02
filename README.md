@@ -6,8 +6,10 @@ A lightweight and flexible UI animation system for Unity that provides smooth tr
 
 - **Fade Animations**
   - Zero-configuration setup with CanvasGroup
+  - Customizable duration and delay
 
 - **Position Transitions** 
+  - Omnidirectional movement
   - Multiple easing functions
   - Flexible component targeting
 
@@ -108,7 +110,7 @@ public class Example : MonoBehaviour
         Debug.Log("Button pressed");
     }
 
-    
+
 }
 
 ```
@@ -116,7 +118,7 @@ public class Example : MonoBehaviour
 ## Requirements
 
 - Unity 2022.3 or higher
-- TextMeshPro package (for text transitions and `Listifier` component)
+- TextMeshPro package
 
 ## License
 
