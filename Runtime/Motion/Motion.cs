@@ -17,7 +17,7 @@ using TMPro;
 
 public class Motion : MonoBehaviour
 {
-    public enum TransitionTarget
+    public enum AnimationTarget
     {
         Panel,
         Text,
@@ -141,7 +141,7 @@ public class Motion : MonoBehaviour
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void TransitionFromUp(TransitionTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    public void TransitionFromUp(AnimationTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
         transitionComponent.TransitionFromUp(target, occurrence, offset, easing, duration, delay);
@@ -156,7 +156,7 @@ public class Motion : MonoBehaviour
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void TransitionFromDown(TransitionTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    public void TransitionFromDown(AnimationTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
         transitionComponent.TransitionFromDown(target, occurrence, offset, easing, duration, delay);
@@ -171,7 +171,7 @@ public class Motion : MonoBehaviour
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void TransitionFromLeft(TransitionTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    public void TransitionFromLeft(AnimationTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
         transitionComponent.TransitionFromLeft(target, occurrence, offset, easing, duration, delay);
@@ -186,7 +186,7 @@ public class Motion : MonoBehaviour
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void TransitionFromRight(TransitionTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    public void TransitionFromRight(AnimationTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
         transitionComponent.TransitionFromRight(target, occurrence, offset, easing, duration, delay);
@@ -201,7 +201,7 @@ public class Motion : MonoBehaviour
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void TransitionFromPosition(TransitionTarget target, int occurrence, Vector2 offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    public void TransitionFromPosition(AnimationTarget target, int occurrence, Vector2 offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
         transitionComponent.TransitionFromPosition(target, occurrence, offset, easing, duration, delay);
@@ -216,7 +216,7 @@ public class Motion : MonoBehaviour
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void TransitionToUp(TransitionTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    public void TransitionToUp(AnimationTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
         transitionComponent.TransitionToUp(target, occurrence, offset, easing, duration, delay);
@@ -231,7 +231,7 @@ public class Motion : MonoBehaviour
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void TransitionToDown(TransitionTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    public void TransitionToDown(AnimationTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
         transitionComponent.TransitionToDown(target, occurrence, offset, easing, duration, delay);
@@ -246,7 +246,7 @@ public class Motion : MonoBehaviour
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void TransitionToLeft(TransitionTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    public void TransitionToLeft(AnimationTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
         transitionComponent.TransitionToLeft(target, occurrence, offset, easing, duration, delay);
@@ -261,7 +261,7 @@ public class Motion : MonoBehaviour
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void TransitionToRight(TransitionTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    public void TransitionToRight(AnimationTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
         transitionComponent.TransitionToRight(target, occurrence, offset, easing, duration, delay);
@@ -276,7 +276,7 @@ public class Motion : MonoBehaviour
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the transition duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void TransitionToPosition(TransitionTarget target, int occurrence, Vector2 offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    public void TransitionToPosition(AnimationTarget target, int occurrence, Vector2 offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
         transitionComponent.TransitionToPosition(target, occurrence, offset, easing, duration, delay);
@@ -293,7 +293,7 @@ public class Motion : MonoBehaviour
     /// <param name="easing">Specifies the easing method the transition should use</param>
     /// <param name="duration">Time in seconds for the rotation duration</param>
     /// <param name="delay">Time in seconds to wait before starting the transition</param>
-    public void Rotate(TransitionTarget target, int occurrence, float degrees, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    public void Rotate(AnimationTarget target, int occurrence, float degrees, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
         rotationComponent.Rotation(target, occurrence, degrees, easing, duration, delay);
@@ -310,7 +310,7 @@ public class Motion : MonoBehaviour
     /// <param name="easing">Specifies the easing method the scaling should use</param>
     /// <param name="duration">Time in seconds the scaling animation should take</param>
     /// <param name="delay">Time in seconds to wait before starting the scaling</param>
-    public void ScaleUp(TransitionTarget target, int occurrence, float multiplier, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    public void ScaleUp(AnimationTarget target, int occurrence, float multiplier, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
         scalingComponent.ScaleUp(target, occurrence, multiplier, easing, duration, delay);
@@ -325,7 +325,7 @@ public class Motion : MonoBehaviour
     /// <param name="easing">Specifies the easing method the scaling should use</param>
     /// <param name="duration">Time in seconds the scaling animation should take</param>
     /// <param name="delay">Time in seconds to wait before starting the scaling</param>
-    public void ScaleDown(TransitionTarget target, int occurrence, float multiplier, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
+    public void ScaleDown(AnimationTarget target, int occurrence, float multiplier, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
         scalingComponent.ScaleDown(target, occurrence, multiplier, easing, duration, delay);
