@@ -54,20 +54,20 @@ internal class Rotate
 
     // ----------------------------------------------------- PUBLIC API -----------------------------------------------------
 
-    public void Rotation(TransitionTarget target, int occurrence, float degrees, EasingType easing = EasingType.Linear, float duration = rotationDuration, float delay = 0f)
+    public void Rotation(AnimationTarget target, int occurrence, float degrees, EasingType easing = EasingType.Linear, float duration = rotationDuration, float delay = 0f)
     {
         switch (target)
         {
-            case TransitionTarget.Panel:
+            case AnimationTarget.Panel:
                 monoBehaviour.StartCoroutine(RotateUi(panelTransform, occurrence, degrees, duration, delay, easing));
                 break;
-            case TransitionTarget.Text:
+            case AnimationTarget.Text:
                 monoBehaviour.StartCoroutine(RotateUi(textComponent[occurrence].rectTransform, occurrence, degrees, duration, delay, easing));
                 break;
-            case TransitionTarget.Image:
+            case AnimationTarget.Image:
                 monoBehaviour.StartCoroutine(RotateUi(imageComponent[occurrence].rectTransform, occurrence, degrees, duration, delay, easing));
                 break;
-            case TransitionTarget.Button:
+            case AnimationTarget.Button:
                 monoBehaviour.StartCoroutine(RotateUi((RectTransform)buttonComponent[occurrence].transform, occurrence, degrees, duration, delay, easing));
                 break;
         }

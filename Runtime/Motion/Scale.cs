@@ -54,39 +54,39 @@ internal class Scale
 
     // ----------------------------------------------------- PUBLIC API -----------------------------------------------------
 
-    public void ScaleUp(TransitionTarget target, int occurrence, float multiplier, EasingType easing = EasingType.Linear, float duration = scalingTime, float delay = 0f)
+    public void ScaleUp(AnimationTarget target, int occurrence, float multiplier, EasingType easing = EasingType.Linear, float duration = scalingTime, float delay = 0f)
     {
         switch (target)
         {
-            case TransitionTarget.Panel:
+            case AnimationTarget.Panel:
                 monoBehaviour.StartCoroutine(ScaleUi(panelTransform, occurrence, multiplier, duration, delay, easing));
                 break;
-            case TransitionTarget.Text:
+            case AnimationTarget.Text:
                 monoBehaviour.StartCoroutine(ScaleUi(textComponent[occurrence].rectTransform, occurrence, multiplier, duration, delay, easing));
                 break;
-            case TransitionTarget.Image:
+            case AnimationTarget.Image:
                 monoBehaviour.StartCoroutine(ScaleUi(imageComponent[occurrence].rectTransform, occurrence, multiplier, duration, delay, easing));
                 break;
-            case TransitionTarget.Button:
+            case AnimationTarget.Button:
                 monoBehaviour.StartCoroutine(ScaleUi((RectTransform)buttonComponent[occurrence].transform, occurrence, multiplier, duration, delay, easing));
                 break;
         }
     }
 
-    public void ScaleDown(TransitionTarget target, int occurrence, float multiplier, EasingType easing = EasingType.Linear, float duration = scalingTime, float delay = 0f)
+    public void ScaleDown(AnimationTarget target, int occurrence, float multiplier, EasingType easing = EasingType.Linear, float duration = scalingTime, float delay = 0f)
     {
         switch (target)
         {
-            case TransitionTarget.Panel:
+            case AnimationTarget.Panel:
                 monoBehaviour.StartCoroutine(ScaleUi(panelTransform, occurrence, 1 / multiplier, duration, delay, easing));
                 break;
-            case TransitionTarget.Text:
+            case AnimationTarget.Text:
                 monoBehaviour.StartCoroutine(ScaleUi(textComponent[occurrence].rectTransform, occurrence, 1/ multiplier, duration, delay, easing));
                 break;
-            case TransitionTarget.Image:
+            case AnimationTarget.Image:
                 monoBehaviour.StartCoroutine(ScaleUi(imageComponent[occurrence].rectTransform, occurrence, 1 / multiplier, duration, delay, easing));
                 break;
-            case TransitionTarget.Button:
+            case AnimationTarget.Button:
                 monoBehaviour.StartCoroutine(ScaleUi((RectTransform)buttonComponent[occurrence].transform, occurrence, 1 / multiplier, duration, delay, easing));
                 break;
         }
