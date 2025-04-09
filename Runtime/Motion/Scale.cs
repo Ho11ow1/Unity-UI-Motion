@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Events;
 
 using static Motion;
 
@@ -12,10 +13,11 @@ using static Motion;
  * 
  * Applies a scaling animation to a UI component
  * 
- * Version: 2.1.0
+ * Version: 2.2.1
  * GitHub: https://github.com/Hollow1/Unity-UI-Motion
  * -------------------------------------------------------- */
 
+#pragma warning disable IDE0090 // Use 'new'
 [AddComponentMenu("")]
 internal class Scale
 {
@@ -54,47 +56,47 @@ internal class Scale
 
     // ----------------------------------------------------- PUBLIC API -----------------------------------------------------
 
-    public void ScaleUp(AnimationTarget target, int occurrence, float multiplier, EasingType easing = EasingType.Linear, float duration = scalingTime, float delay = 0f)
+    public void ScaleUp(AnimationTarget target, int occurrence, float multiplier, EasingType easing = EasingType.Linear, float duration = scalingTime, float delay = 0f, UnityAction scaleStart = null, UnityAction scaleEnd = null)
     {
         switch (target)
         {
             case AnimationTarget.Panel:
-                monoBehaviour.StartCoroutine(ScaleUi(panelTransform, occurrence, multiplier, duration, delay, easing));
+                monoBehaviour.StartCoroutine(ScaleUi(panelTransform, occurrence, multiplier, duration, delay, easing, scaleStart, scaleEnd));
                 break;
             case AnimationTarget.Text:
-                monoBehaviour.StartCoroutine(ScaleUi(textComponent[occurrence].rectTransform, occurrence, multiplier, duration, delay, easing));
+                monoBehaviour.StartCoroutine(ScaleUi(textComponent[occurrence].rectTransform, occurrence, multiplier, duration, delay, easing, scaleStart, scaleEnd));
                 break;
             case AnimationTarget.Image:
-                monoBehaviour.StartCoroutine(ScaleUi(imageComponent[occurrence].rectTransform, occurrence, multiplier, duration, delay, easing));
+                monoBehaviour.StartCoroutine(ScaleUi(imageComponent[occurrence].rectTransform, occurrence, multiplier, duration, delay, easing, scaleStart, scaleEnd));
                 break;
             case AnimationTarget.Button:
-                monoBehaviour.StartCoroutine(ScaleUi((RectTransform)buttonComponent[occurrence].transform, occurrence, multiplier, duration, delay, easing));
+                monoBehaviour.StartCoroutine(ScaleUi((RectTransform)buttonComponent[occurrence].transform, occurrence, multiplier, duration, delay, easing, scaleStart, scaleEnd));
                 break;
         }
     }
 
-    public void ScaleDown(AnimationTarget target, int occurrence, float multiplier, EasingType easing = EasingType.Linear, float duration = scalingTime, float delay = 0f)
+    public void ScaleDown(AnimationTarget target, int occurrence, float multiplier, EasingType easing = EasingType.Linear, float duration = scalingTime, float delay = 0f, UnityAction scaleStart = null, UnityAction scaleEnd = null)
     {
         switch (target)
         {
             case AnimationTarget.Panel:
-                monoBehaviour.StartCoroutine(ScaleUi(panelTransform, occurrence, 1 / multiplier, duration, delay, easing));
+                monoBehaviour.StartCoroutine(ScaleUi(panelTransform, occurrence, 1 / multiplier, duration, delay, easing, scaleStart, scaleEnd));
                 break;
             case AnimationTarget.Text:
-                monoBehaviour.StartCoroutine(ScaleUi(textComponent[occurrence].rectTransform, occurrence, 1/ multiplier, duration, delay, easing));
+                monoBehaviour.StartCoroutine(ScaleUi(textComponent[occurrence].rectTransform, occurrence, 1/ multiplier, duration, delay, easing, scaleStart, scaleEnd));
                 break;
             case AnimationTarget.Image:
-                monoBehaviour.StartCoroutine(ScaleUi(imageComponent[occurrence].rectTransform, occurrence, 1 / multiplier, duration, delay, easing));
+                monoBehaviour.StartCoroutine(ScaleUi(imageComponent[occurrence].rectTransform, occurrence, 1 / multiplier, duration, delay, easing, scaleStart, scaleEnd));
                 break;
             case AnimationTarget.Button:
-                monoBehaviour.StartCoroutine(ScaleUi((RectTransform)buttonComponent[occurrence].transform, occurrence, 1 / multiplier, duration, delay, easing));
+                monoBehaviour.StartCoroutine(ScaleUi((RectTransform)buttonComponent[occurrence].transform, occurrence, 1 / multiplier, duration, delay, easing, scaleStart, scaleEnd));
                 break;
         }
     }
 
     // ----------------------------------------------------- SCALE ANIMATION -----------------------------------------------------
 
-    private IEnumerator ScaleUi(RectTransform component, int occurrence, float scaleAmount, float duration, float delay, EasingType easing)
+    private IEnumerator ScaleUi(RectTransform component, int occurrence, float scaleAmount, float duration, float delay, EasingType easing, UnityAction scaleStart, UnityAction scaleEnd)
     {
         if (component == null) { yield break; }
 
@@ -155,6 +157,7 @@ internal class Scale
             }
         }
 
+        scaleStart?.Invoke();
         float elapsedTime = 0f;
         targetScale = startScale * scaleAmount;
         if (delay > 0) { yield return new WaitForSeconds(delay); }
@@ -170,6 +173,7 @@ internal class Scale
         }
 
         component.localScale = targetScale;
+        scaleEnd?.Invoke();
     }
 
 

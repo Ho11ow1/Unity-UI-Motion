@@ -66,6 +66,9 @@ public class Example : MonoBehaviour
         eventSystem = FindAnyObjectByType<EventSystem>();
 
         panelMotion.TurnInvisible();
+
+        Motion.fadeStart += OnStart;
+        Motion.fadeEnd += OnEnd;
     }
 
     void Start()
@@ -94,10 +97,16 @@ public class Example : MonoBehaviour
         eventSystem.SetSelectedGameObject(objectList[0]);
     }
 
+    void OnDisable()
+    {
+        Motion.fadeStart -= onStart;
+        Motion.fadeEnd -= onEnd;
+    }
+
     public void ShowPopup()
     {
         panelMotion.FadeIn(0f, 0.75f);
-        panelMotion.TransitionFromLeft(Motion.AnimationTarget.Image, 1, 50f, Motion.EasingType.EaseIn, 1.5f);
+        panelMotion.TransitionFromLeft(Motion.TransitionTarget.Image, 1, 50f, Motion.EasingType.EaseIn, 1.5f);
     }
 
     public void HidePopup()
@@ -110,7 +119,15 @@ public class Example : MonoBehaviour
         Debug.Log("Button pressed");
     }
 
+    private void OnStart()
+    {
+        Debug.Log("Animation started: " + Time.time);
+    }
 
+    private void OnEnd()
+    {
+        Debug.Log("Animation finished: " + Time.time);
+    }
 }
 
 ```

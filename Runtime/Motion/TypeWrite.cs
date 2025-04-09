@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 /* --------------------------------------------------------
  * Unity UI Motion - TypeWriter Animation Component
@@ -9,10 +10,11 @@ using UnityEngine;
  * 
  * Applies a typewriter effect to a TextMeshProUGUI component
  * 
- * Version: 2.1.0
+ * Version: 2.2.1
  * GitHub: https://github.com/Hollow1/Unity-UI-Motion
  * -------------------------------------------------------- */
 
+#pragma warning disable IDE0090 // Use 'new'
 [AddComponentMenu("")]
 internal class TypeWrite
 {
@@ -33,19 +35,20 @@ internal class TypeWrite
 
     // ----------------------------------------------------- PUBLIC API -----------------------------------------------------
 
-    public void TypeWriter(int occurrence, float delay = standardDelay, float duration = standardDuration)
+    public void TypeWriter(int occurrence, float delay = standardDelay, float duration = standardDuration, UnityAction typeWriteStart = null, UnityAction typeWriteEnd = null)
     {
         targetString[occurrence] = textComponent[occurrence].text;
         length = targetString[occurrence].Length;
-        monoBehaviour.StartCoroutine(Writer(occurrence, delay, duration));
+        monoBehaviour.StartCoroutine(Writer(occurrence, delay, duration, typeWriteStart, typeWriteEnd));
     }
 
     // ----------------------------------------------------- TYPEWRITER EFFECT -----------------------------------------------------
 
-    private IEnumerator Writer(int occurrence, float delay, float duration)
+    private IEnumerator Writer(int occurrence, float delay, float duration, UnityAction typeWriteStart, UnityAction typeWriteEnd)
     {
         if (textComponent == null) { yield break; }
 
+        typeWriteStart?.Invoke();
         textComponent[occurrence].text = "";
         string currentText = "";
 
@@ -59,5 +62,6 @@ internal class TypeWrite
         }
 
         if (textComponent[occurrence].text != targetString[occurrence]) { textComponent[occurrence].text = targetString[occurrence]; }
+        typeWriteEnd?.Invoke();
     }
 }

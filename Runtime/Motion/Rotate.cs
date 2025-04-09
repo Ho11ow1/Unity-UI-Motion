@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Events;
 
 using static Motion;
 
@@ -12,10 +13,11 @@ using static Motion;
  * 
  * Applies a Rotation animation to a UI component
  * 
- * Version: 2.1.0
+ * Version: 2.2.1
  * GitHub: https://github.com/Hollow1/Unity-UI-Motion
  * -------------------------------------------------------- */
 
+#pragma warning disable IDE0090 // Use 'new'
 [AddComponentMenu("")]
 internal class Rotate
 {
@@ -54,28 +56,28 @@ internal class Rotate
 
     // ----------------------------------------------------- PUBLIC API -----------------------------------------------------
 
-    public void Rotation(AnimationTarget target, int occurrence, float degrees, EasingType easing = EasingType.Linear, float duration = rotationDuration, float delay = 0f)
+    public void Rotation(AnimationTarget target, int occurrence, float degrees, EasingType easing = EasingType.Linear, float duration = rotationDuration, float delay = 0f, UnityAction rotateStart = null, UnityAction rotateEnd = null)
     {
         switch (target)
         {
             case AnimationTarget.Panel:
-                monoBehaviour.StartCoroutine(RotateUi(panelTransform, occurrence, degrees, duration, delay, easing));
+                monoBehaviour.StartCoroutine(RotateUi(panelTransform, occurrence, degrees, duration, delay, easing, rotateStart, rotateEnd));
                 break;
             case AnimationTarget.Text:
-                monoBehaviour.StartCoroutine(RotateUi(textComponent[occurrence].rectTransform, occurrence, degrees, duration, delay, easing));
+                monoBehaviour.StartCoroutine(RotateUi(textComponent[occurrence].rectTransform, occurrence, degrees, duration, delay, easing, rotateStart, rotateEnd));
                 break;
             case AnimationTarget.Image:
-                monoBehaviour.StartCoroutine(RotateUi(imageComponent[occurrence].rectTransform, occurrence, degrees, duration, delay, easing));
+                monoBehaviour.StartCoroutine(RotateUi(imageComponent[occurrence].rectTransform, occurrence, degrees, duration, delay, easing, rotateStart, rotateEnd));
                 break;
             case AnimationTarget.Button:
-                monoBehaviour.StartCoroutine(RotateUi((RectTransform)buttonComponent[occurrence].transform, occurrence, degrees, duration, delay, easing));
+                monoBehaviour.StartCoroutine(RotateUi((RectTransform)buttonComponent[occurrence].transform, occurrence, degrees, duration, delay, easing, rotateStart, rotateEnd));
                 break;
         }
     }
 
     // ----------------------------------------------------- ROTATE ANIMATION -----------------------------------------------------
 
-    private IEnumerator RotateUi(RectTransform component, int occurrence, float degrees, float duration, float delay, EasingType easing)
+    private IEnumerator RotateUi(RectTransform component, int occurrence, float degrees, float duration, float delay, EasingType easing, UnityAction rotateStart, UnityAction rotateEnd)
     {
         if (component == null) { yield break; }
 
@@ -135,6 +137,7 @@ internal class Rotate
             }
         }
 
+        rotateStart?.Invoke();
         float elapsedTime = 0f;
         targetRotation = Quaternion.Euler(0, 0, degrees);
         if (delay > 0) { yield return new WaitForSeconds(delay); }
@@ -150,6 +153,7 @@ internal class Rotate
         }
 
         component.localRotation = targetRotation;
+        rotateEnd?.Invoke();
     }
 
 

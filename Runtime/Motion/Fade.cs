@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 /* --------------------------------------------------------
  * Unity UI Motion - Fade Animation Component
@@ -8,7 +9,7 @@ using UnityEngine;
  * 
  * Applies a Fade animation to a UI panel
  * 
- * Version: 2.1.0
+ * Version: 2.2.1
  * GitHub: https://github.com/Hollow1/Unity-UI-Motion
  * -------------------------------------------------------- */
 
@@ -44,22 +45,23 @@ internal class Fade
         canvasGroup.alpha = visible;
     }
 
-    public void FadeIn(float delay = 0f, float duration = fadeDuration)
+    public void FadeIn(float delay = 0f, float duration = fadeDuration, UnityAction fadeStart = null, UnityAction fadeEnd = null)
     {
-        monoBehaviour.StartCoroutine(FadeUiIn(delay, duration));
+        monoBehaviour.StartCoroutine(FadeUiIn(delay, duration, fadeStart, fadeEnd));
     }
 
-    public void FadeOut(float delay = 0f, float duration = fadeDuration)
+    public void FadeOut(float delay = 0f, float duration = fadeDuration, UnityAction fadeStart = null, UnityAction fadeEnd = null)
     {
-        monoBehaviour.StartCoroutine(FadeUiOut(delay, duration));
+        monoBehaviour.StartCoroutine(FadeUiOut(delay, duration, fadeStart, fadeEnd));
     }
 
     // ----------------------------------------------------- FADE IN ANIMATION -----------------------------------------------------
 
-    private IEnumerator FadeUiIn(float delay, float duration)
+    private IEnumerator FadeUiIn(float delay, float duration, UnityAction fadeStart, UnityAction fadeEnd)
     {
         if (canvasGroup == null) { yield break; }
 
+        fadeStart?.Invoke();
         float elapsedTime = 0f;
         canvasGroup.alpha = transparent;
         if (delay > 0) { yield return new WaitForSeconds(delay); }
@@ -72,14 +74,16 @@ internal class Fade
         }
 
         canvasGroup.alpha = visible;
+        fadeEnd?.Invoke();
     }
 
     // ----------------------------------------------------- FADE OUT ANIMATION -----------------------------------------------------
 
-    private IEnumerator FadeUiOut(float delay, float duration)
+    private IEnumerator FadeUiOut(float delay, float duration, UnityAction fadeStart, UnityAction fadeEnd)
     {
         if (canvasGroup == null) { yield break; }
 
+        fadeStart?.Invoke();
         float elapsedTime = 0f;
         canvasGroup.alpha = visible;
         if (delay > 0) { yield return new WaitForSeconds(delay); }
@@ -92,6 +96,7 @@ internal class Fade
         }
 
         canvasGroup.alpha = transparent;
+        fadeEnd?.Invoke();
     }
 
 
