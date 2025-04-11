@@ -16,64 +16,63 @@ using UnityEngine.Events;
 [AddComponentMenu("")]
 internal class Fade
 {
-    private readonly CanvasGroup canvasGroup;
-    private readonly MonoBehaviour monoBehaviour;
+    private readonly CanvasGroup _canvasGroup;
+    private readonly MonoBehaviour _monoBehaviour;
 
     private const float transparent = 0f;
     private const float visible = 1.0f;
-    private const float fadeDuration = 0.5f;
 
     public Fade(CanvasGroup cg, MonoBehaviour runner)
     {
-        canvasGroup = cg;
-        monoBehaviour = runner;
+        _canvasGroup = cg;
+        _monoBehaviour = runner;
     }
 
     // ----------------------------------------------------- PUBLIC API -----------------------------------------------------
 
     public void TurnInvisible()
     {
-        if (canvasGroup == null) { return; }
+        if (_canvasGroup == null) { return; }
 
-        canvasGroup.alpha = transparent;
+        _canvasGroup.alpha = transparent;
     }
 
     public void TurnVisible()
     {
-        if (canvasGroup == null) { return; }
+        if (_canvasGroup == null) { return; }
 
-        canvasGroup.alpha = visible;
+        _canvasGroup.alpha = visible;
     }
 
-    public void FadeIn(float delay = 0f, float duration = fadeDuration, UnityAction fadeStart = null, UnityAction fadeEnd = null)
+    public void FadeIn(float delay = 0f, float duration = Motion.defaultDuration, UnityAction fadeStart = null, UnityAction fadeEnd = null)
     {
-        monoBehaviour.StartCoroutine(FadeUiIn(delay, duration, fadeStart, fadeEnd));
+        _monoBehaviour.StartCoroutine(FadeUiIn(delay, duration, fadeStart, fadeEnd));
     }
 
-    public void FadeOut(float delay = 0f, float duration = fadeDuration, UnityAction fadeStart = null, UnityAction fadeEnd = null)
+    public void FadeOut(float delay = 0f, float duration = Motion.defaultDuration, UnityAction fadeStart = null, UnityAction fadeEnd = null)
     {
-        monoBehaviour.StartCoroutine(FadeUiOut(delay, duration, fadeStart, fadeEnd));
+        _monoBehaviour.StartCoroutine(FadeUiOut(delay, duration, fadeStart, fadeEnd));
     }
 
     // ----------------------------------------------------- FADE IN ANIMATION -----------------------------------------------------
 
     private IEnumerator FadeUiIn(float delay, float duration, UnityAction fadeStart, UnityAction fadeEnd)
     {
-        if (canvasGroup == null) { yield break; }
+        if (_canvasGroup == null) { yield break; }
 
         fadeStart?.Invoke();
         float elapsedTime = 0f;
-        canvasGroup.alpha = transparent;
+        _canvasGroup.alpha = transparent;
         if (delay > 0) { yield return new WaitForSeconds(delay); }
 
         while (elapsedTime < duration)
         {
-            canvasGroup.alpha = Mathf.Lerp(transparent, visible, elapsedTime / duration);
+            _canvasGroup.alpha = Mathf.Lerp(transparent, visible, elapsedTime / duration);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        canvasGroup.alpha = visible;
+        _canvasGroup.alpha = visible;
         fadeEnd?.Invoke();
     }
 
@@ -81,21 +80,21 @@ internal class Fade
 
     private IEnumerator FadeUiOut(float delay, float duration, UnityAction fadeStart, UnityAction fadeEnd)
     {
-        if (canvasGroup == null) { yield break; }
+        if (_canvasGroup == null) { yield break; }
 
         fadeStart?.Invoke();
         float elapsedTime = 0f;
-        canvasGroup.alpha = visible;
+        _canvasGroup.alpha = visible;
         if (delay > 0) { yield return new WaitForSeconds(delay); }
 
         while (elapsedTime < duration)
         {
-            canvasGroup.alpha = Mathf.Lerp(visible, transparent, elapsedTime / duration);
+            _canvasGroup.alpha = Mathf.Lerp(visible, transparent, elapsedTime / duration);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        canvasGroup.alpha = transparent;
+        _canvasGroup.alpha = transparent;
         fadeEnd?.Invoke();
     }
 

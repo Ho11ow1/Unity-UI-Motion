@@ -21,11 +21,11 @@ using static Motion;
 [AddComponentMenu("")]
 internal class Scale
 {
-    private readonly TextMeshProUGUI[] textComponent;
-    private readonly Image[] imageComponent;
-    private readonly Button[] buttonComponent;
-    private readonly RectTransform panelTransform;
-    private readonly MonoBehaviour monoBehaviour;
+    private readonly TextMeshProUGUI[] _textComponent;
+    private readonly Image[] _imageComponent;
+    private readonly Button[] _buttonComponent;
+    private readonly RectTransform _panelTransform;
+    private readonly MonoBehaviour _monoBehaviour;
 
     private readonly List<Utils.AutoIncreaseList<Vector2>> originalScale = new List<Utils.AutoIncreaseList<Vector2>>()
     {
@@ -43,53 +43,51 @@ internal class Scale
         new Utils.AutoIncreaseList<bool>()
     };
 
-    private const float scalingTime = 0.5f;
-
     public Scale(TextMeshProUGUI[] text, Image[] image, Button[] button, RectTransform panel, MonoBehaviour runner)
     {
-        textComponent = text;
-        imageComponent = image;
-        buttonComponent = button;
-        panelTransform = panel;
-        monoBehaviour = runner;
+        _textComponent = text;
+        _imageComponent = image;
+        _buttonComponent = button;
+        _panelTransform = panel;
+        _monoBehaviour = runner;
     }
 
     // ----------------------------------------------------- PUBLIC API -----------------------------------------------------
 
-    public void ScaleUp(AnimationTarget target, int occurrence, float multiplier, EasingType easing = EasingType.Linear, float duration = scalingTime, float delay = 0f, UnityAction scaleStart = null, UnityAction scaleEnd = null)
+    public void ScaleUp(AnimationTarget target, int occurrence, float multiplier, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f, UnityAction scaleStart = null, UnityAction scaleEnd = null)
     {
         switch (target)
         {
             case AnimationTarget.Panel:
-                monoBehaviour.StartCoroutine(ScaleUi(panelTransform, occurrence, multiplier, duration, delay, easing, scaleStart, scaleEnd));
+                _monoBehaviour.StartCoroutine(ScaleUi(_panelTransform, occurrence, multiplier, duration, delay, easing, scaleStart, scaleEnd));
                 break;
             case AnimationTarget.Text:
-                monoBehaviour.StartCoroutine(ScaleUi(textComponent[occurrence].rectTransform, occurrence, multiplier, duration, delay, easing, scaleStart, scaleEnd));
+                _monoBehaviour.StartCoroutine(ScaleUi(_textComponent[occurrence].rectTransform, occurrence, multiplier, duration, delay, easing, scaleStart, scaleEnd));
                 break;
             case AnimationTarget.Image:
-                monoBehaviour.StartCoroutine(ScaleUi(imageComponent[occurrence].rectTransform, occurrence, multiplier, duration, delay, easing, scaleStart, scaleEnd));
+                _monoBehaviour.StartCoroutine(ScaleUi(_imageComponent[occurrence].rectTransform, occurrence, multiplier, duration, delay, easing, scaleStart, scaleEnd));
                 break;
             case AnimationTarget.Button:
-                monoBehaviour.StartCoroutine(ScaleUi((RectTransform)buttonComponent[occurrence].transform, occurrence, multiplier, duration, delay, easing, scaleStart, scaleEnd));
+                _monoBehaviour.StartCoroutine(ScaleUi((RectTransform)_buttonComponent[occurrence].transform, occurrence, multiplier, duration, delay, easing, scaleStart, scaleEnd));
                 break;
         }
     }
 
-    public void ScaleDown(AnimationTarget target, int occurrence, float multiplier, EasingType easing = EasingType.Linear, float duration = scalingTime, float delay = 0f, UnityAction scaleStart = null, UnityAction scaleEnd = null)
+    public void ScaleDown(AnimationTarget target, int occurrence, float multiplier, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f, UnityAction scaleStart = null, UnityAction scaleEnd = null)
     {
         switch (target)
         {
             case AnimationTarget.Panel:
-                monoBehaviour.StartCoroutine(ScaleUi(panelTransform, occurrence, 1 / multiplier, duration, delay, easing, scaleStart, scaleEnd));
+                _monoBehaviour.StartCoroutine(ScaleUi(_panelTransform, occurrence, 1 / multiplier, duration, delay, easing, scaleStart, scaleEnd));
                 break;
             case AnimationTarget.Text:
-                monoBehaviour.StartCoroutine(ScaleUi(textComponent[occurrence].rectTransform, occurrence, 1/ multiplier, duration, delay, easing, scaleStart, scaleEnd));
+                _monoBehaviour.StartCoroutine(ScaleUi(_textComponent[occurrence].rectTransform, occurrence, 1 / multiplier, duration, delay, easing, scaleStart, scaleEnd));
                 break;
             case AnimationTarget.Image:
-                monoBehaviour.StartCoroutine(ScaleUi(imageComponent[occurrence].rectTransform, occurrence, 1 / multiplier, duration, delay, easing, scaleStart, scaleEnd));
+                _monoBehaviour.StartCoroutine(ScaleUi(_imageComponent[occurrence].rectTransform, occurrence, 1 / multiplier, duration, delay, easing, scaleStart, scaleEnd));
                 break;
             case AnimationTarget.Button:
-                monoBehaviour.StartCoroutine(ScaleUi((RectTransform)buttonComponent[occurrence].transform, occurrence, 1 / multiplier, duration, delay, easing, scaleStart, scaleEnd));
+                _monoBehaviour.StartCoroutine(ScaleUi((RectTransform)_buttonComponent[occurrence].transform, occurrence, 1 / multiplier, duration, delay, easing, scaleStart, scaleEnd));
                 break;
         }
     }
@@ -104,11 +102,11 @@ internal class Scale
         Vector2 targetScale;
 
 
-        if (component == panelTransform)
+        if (component == _panelTransform)
         {
             if (!storedScale[panelIndex][0])
             {
-                startScale = panelTransform.localScale;
+                startScale = _panelTransform.localScale;
                 originalScale[panelIndex][0] = startScale;
                 storedScale[panelIndex][0] = true;
             }
@@ -117,11 +115,11 @@ internal class Scale
                 startScale = originalScale[panelIndex][0];
             }
         }
-        else if (component == textComponent[occurrence].rectTransform)
+        else if (component == _textComponent[occurrence].rectTransform)
         {
             if (!storedScale[textIndex][occurrence])
             {
-                startScale = textComponent[occurrence].rectTransform.localScale;
+                startScale = _textComponent[occurrence].rectTransform.localScale;
                 originalScale[textIndex][occurrence] = startScale;
                 storedScale[textIndex][occurrence] = true;
             }
@@ -130,11 +128,11 @@ internal class Scale
                 startScale = originalScale[textIndex][occurrence];
             }
         }
-        else if (component == imageComponent[occurrence].rectTransform)
+        else if (component == _imageComponent[occurrence].rectTransform)
         {
             if (!storedScale[imageIndex][occurrence])
             {
-                startScale = imageComponent[occurrence].rectTransform.localScale;
+                startScale = _imageComponent[occurrence].rectTransform.localScale;
                 originalScale[imageIndex][occurrence] = startScale;
                 storedScale[imageIndex][occurrence] = true;
             }
@@ -143,11 +141,11 @@ internal class Scale
                 startScale = originalScale[imageIndex][occurrence];
             }
         }
-        else if (component == (RectTransform)buttonComponent[occurrence].transform)
+        else if (component == (RectTransform)_buttonComponent[occurrence].transform)
         {
             if (!storedScale[buttonIndex][occurrence])
             {
-                startScale = buttonComponent[occurrence].transform.localScale;
+                startScale = _buttonComponent[occurrence].transform.localScale;
                 originalScale[buttonIndex][occurrence] = startScale;
                 storedScale[buttonIndex][occurrence] = true;
             }

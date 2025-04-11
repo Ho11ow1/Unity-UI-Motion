@@ -13,7 +13,7 @@ using TMPro;
  * with a background image, title and description
  * (description is only visible on hover)
  * 
- * Version: 2.1.0
+ * Version: 2.2.1
  * GitHub: https://github.com/Hollow1/Unity-UI-Motion
  * -------------------------------------------------------- */
 
@@ -25,52 +25,52 @@ public class Listifier : MonoBehaviour
         Horizontal
     }
 
-    private GameObject prefab;
-    private GameObject menuPanel;
-    private Transform panelTransform;
+    private GameObject _prefab;
+    private GameObject _menuPanel;
+    private Transform _panelTransform;
 
-    [SerializeField] private float offsetX = 0;
-    [SerializeField] private float offsetY = 0;
+    [SerializeField] private float _offsetX = 0;
+    [SerializeField] private float _offsetY = 0;
 
-    private List<KeyValuePair<string, string>> textList = new List<KeyValuePair<string, string>>();
+    private List<KeyValuePair<string, string>> _textList = new List<KeyValuePair<string, string>>();
     public List<GameObject> objectList = new List<GameObject>();
 
     void Awake()
     {
-        menuPanel = gameObject;
-        panelTransform = GetComponent<RectTransform>();
-        prefab = Resources.Load<GameObject>("Listify/ListItem");
+        _menuPanel = gameObject;
+        _panelTransform = GetComponent<RectTransform>();
+        _prefab = Resources.Load<GameObject>("Listify/ListItem");
 
         #if UNITY_EDITOR
-        if (prefab == null) { Debug.LogError($"[{gameObject.name}] Prefab not found"); }
-        else { Debug.Log($"[{gameObject.name}] Loaded prefab: {prefab.name}, Active: {prefab.activeSelf}, Scene: {prefab.scene.name}"); }
-        if (panelTransform == null) { Debug.LogWarning($"[{gameObject.name}] No RectTransform component found."); }
+        if (_prefab == null) { Debug.LogError($"[{gameObject.name}] Prefab not found"); }
+        else { Debug.Log($"[{gameObject.name}] Loaded _prefab: {_prefab.name}, Active: {_prefab.activeSelf}, Scene: {_prefab.scene.name}"); }
+        if (_panelTransform == null) { Debug.LogWarning($"[{gameObject.name}] No RectTransform component found."); }
         #endif
     }
 
     // ----------------------------------------------------- PUBLIC API -----------------------------------------------------
 
     /// <summary>
-    /// Creates a vertical list of interactable buttons
+    /// Creates a vertical list of interactable _buttons
     /// </summary>
-    /// <param name="pairs">KeyValuePair list for button title + description</param>
+    /// <param name="pairs">KeyValuePair list for _button title + description</param>
     /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). Positive values move the 2nd+ element down</param>
     public void Listify(List<KeyValuePair<string, string>> pairs, float offset)
     {
-        offsetY = offset;
+        _offsetY = offset;
         pairs.Reverse();
         MakeLists(pairs);
         AddButtonEffects();
     }
 
     /// <summary>
-    /// Creates a horizontal list of interactable buttons
+    /// Creates a horizontal list of interactable _buttons
     /// </summary>
-    /// <param name="pairs">KeyValuePair list for button title + description</param>
+    /// <param name="pairs">KeyValuePair list for _button title + description</param>
     /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). Positive values move the 2nd+ element to the right</param>
     public void Rowify(List<KeyValuePair<string, string>> pairs, float offset)
     {
-        offsetX = offset;
+        _offsetX = offset;
         pairs.Reverse();
         MakeLists(pairs);
         AddButtonEffects();
@@ -85,7 +85,7 @@ public class Listifier : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets the button navigation explicitly based on direction
+    /// Sets the _button navigation explicitly based on direction
     /// </summary>
     /// <param name="direction">Direction in which the UI should navigate. Vertical:Up,Down - Horizontal:Left,Right</param>
     public void SetNavigation(ListDirection direction)
@@ -144,14 +144,14 @@ public class Listifier : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets button onClick events in order
+    /// Sets _button onClick events in order
     /// </summary>
-    /// <param name="event1">Function to be called on the first button</param>
-    /// <param name="event2">Function to be called on the second button</param>
-    /// <param name="event3">Function to be called on the third button</param>
-    /// <param name="event4">Function to be called on the fourth button</param>
-    /// <param name="event5">Function to be called on the fifth button</param>
-    /// <param name="event6">Function to be called on the sixth button</param>
+    /// <param name="event1">Function to be called on the first _button</param>
+    /// <param name="event2">Function to be called on the second _button</param>
+    /// <param name="event3">Function to be called on the third _button</param>
+    /// <param name="event4">Function to be called on the fourth _button</param>
+    /// <param name="event5">Function to be called on the fifth _button</param>
+    /// <param name="event6">Function to be called on the sixth _button</param>
     public void SetButtonEvents(UnityAction event1 = null, UnityAction event2 = null, UnityAction event3 = null, UnityAction event4 = null, UnityAction event5 = null, UnityAction event6 = null)
     {
         UnityAction[] events = { event1, event2, event3, event4, event5, event6 };
@@ -169,15 +169,15 @@ public class Listifier : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets the button navigation explicitly based on direction with onClick events in order
+    /// Sets the _button navigation explicitly based on direction with onClick events in order
     /// </summary>
     /// <param name="direction">Direction in which the UI should navigate. Vertical:Up,Down - Horizontal:Left,Right</param>
-    /// <param name="event1">Function to be called on the first button</param>
-    /// <param name="event2">Function to be called on the second button</param>
-    /// <param name="event3">Function to be called on the third button</param>
-    /// <param name="event4">Function to be called on the fourth button</param>
-    /// <param name="event5">Function to be called on the fifth button</param>
-    /// <param name="event6">Function to be called on the sixth button</param>
+    /// <param name="event1">Function to be called on the first _button</param>
+    /// <param name="event2">Function to be called on the second _button</param>
+    /// <param name="event3">Function to be called on the third _button</param>
+    /// <param name="event4">Function to be called on the fourth _button</param>
+    /// <param name="event5">Function to be called on the fifth _button</param>
+    /// <param name="event6">Function to be called on the sixth _button</param>
     public void SetNavigationWithEvents(ListDirection direction, UnityAction event1 = null, UnityAction event2 = null, UnityAction event3 = null, UnityAction event4 = null, UnityAction event5 = null, UnityAction event6 = null)
     {
         SetNavigation(direction);
@@ -188,13 +188,13 @@ public class Listifier : MonoBehaviour
 
     private void MakeLists(List<KeyValuePair<string, string>> list)
     {
-        textList = list;
-        textList.Reverse();
+        _textList = list;
+        _textList.Reverse();
         objectList.Clear();
 
-        foreach (KeyValuePair<string, string> item in textList)
+        foreach (KeyValuePair<string, string> item in _textList)
         {
-            GameObject newItem = Instantiate(prefab, menuPanel.transform);
+            GameObject newItem = Instantiate(_prefab, _menuPanel.transform);
             RectTransform rectTransform = newItem.GetComponent<RectTransform>();
 
             TextMeshProUGUI[] arr = newItem.GetComponentsInChildren<TextMeshProUGUI>();
@@ -212,13 +212,13 @@ public class Listifier : MonoBehaviour
 
             objectList.Add(newItem);
 
-            if (offsetX > 0)
+            if (_offsetX > 0)
             {
-                rectTransform.anchoredPosition += new Vector2(offsetX * (objectList.Count - 1), 0);
+                rectTransform.anchoredPosition += new Vector2(_offsetX * (objectList.Count - 1), 0);
             }
-            else if (offsetY > 0)
+            else if (_offsetY > 0)
             {
-                rectTransform.anchoredPosition -= new Vector2(0, offsetY * (objectList.Count - 1));
+                rectTransform.anchoredPosition -= new Vector2(0, _offsetY * (objectList.Count - 1));
             }
             else
             {

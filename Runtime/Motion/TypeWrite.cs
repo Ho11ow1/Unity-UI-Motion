@@ -18,50 +18,50 @@ using UnityEngine.Events;
 [AddComponentMenu("")]
 internal class TypeWrite
 {
-    private readonly TextMeshProUGUI[] textComponent;
-    private readonly MonoBehaviour monoBehaviour;
+    private readonly TextMeshProUGUI[] _textComponent;
+    private readonly MonoBehaviour _monoBehaviour;
 
-    private readonly Utils.StringAutoIncreaseList targetString = new Utils.StringAutoIncreaseList();
-    private int length;
+    private readonly Utils.StringAutoIncreaseList _targetString = new Utils.StringAutoIncreaseList();
+    private int _length;
 
-    private const float standardDelay = 0.3f;
-    private const float standardDuration = 3f;
+    private const float _standardDelay = 0.3f;
+    private const float _standardDuration = 3f;
 
     public TypeWrite(TextMeshProUGUI[] tmp, MonoBehaviour runner)
     {
-        textComponent = tmp;
-        monoBehaviour = runner;
+        _textComponent = tmp;
+        _monoBehaviour = runner;
     }
 
     // ----------------------------------------------------- PUBLIC API -----------------------------------------------------
 
-    public void TypeWriter(int occurrence, float delay = standardDelay, float duration = standardDuration, UnityAction typeWriteStart = null, UnityAction typeWriteEnd = null)
+    public void TypeWriter(int occurrence, float delay = _standardDelay, float duration = _standardDuration, UnityAction typeWriteStart = null, UnityAction typeWriteEnd = null)
     {
-        targetString[occurrence] = textComponent[occurrence].text;
-        length = targetString[occurrence].Length;
-        monoBehaviour.StartCoroutine(Writer(occurrence, delay, duration, typeWriteStart, typeWriteEnd));
+        _targetString[occurrence] = _textComponent[occurrence].text;
+        _length = _targetString[occurrence].Length;
+        _monoBehaviour.StartCoroutine(Writer(occurrence, delay, duration, typeWriteStart, typeWriteEnd));
     }
 
     // ----------------------------------------------------- TYPEWRITER EFFECT -----------------------------------------------------
 
     private IEnumerator Writer(int occurrence, float delay, float duration, UnityAction typeWriteStart, UnityAction typeWriteEnd)
     {
-        if (textComponent == null) { yield break; }
+        if (_textComponent == null) { yield break; }
 
         typeWriteStart?.Invoke();
-        textComponent[occurrence].text = "";
+        _textComponent[occurrence].text = "";
         string currentText = "";
 
-        if (duration > 0 && length > 0) { delay = duration / length; }
+        if (duration > 0 && _length > 0) { delay = duration / _length; }
 
-        foreach (char c in targetString[occurrence])
+        foreach (char c in _targetString[occurrence])
         {
             currentText += c;
-            textComponent[occurrence].text = currentText;
+            _textComponent[occurrence].text = currentText;
             yield return new WaitForSeconds(delay);
         }
 
-        if (textComponent[occurrence].text != targetString[occurrence]) { textComponent[occurrence].text = targetString[occurrence]; }
+        if (_textComponent[occurrence].text != _targetString[occurrence]) { _textComponent[occurrence].text = _targetString[occurrence]; }
         typeWriteEnd?.Invoke();
     }
 }

@@ -11,41 +11,41 @@ using TMPro;
  * 
  * Applies a customisable hover effect to a button on hover
  * 
- * Version: 2.1.0
+ * Version: 2.2.1
  * GitHub: https://github.com/Hollow1/Unity-UI-Motion
  * -------------------------------------------------------- */
 
 public class HoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
 {
-    private RectTransform rectTransform;
-    private Button button;
-    private TextMeshProUGUI[] textArr;
-    private bool isSelected = false;
+    private RectTransform _rectTransform;
+    private Button _button;
+    private TextMeshProUGUI[] _textArr;
+    private bool _isSelected = false;
 
-    private Coroutine hoverEffectCoroutine;
-    private Dictionary<RectTransform, Coroutine> textPositionCoroutines = new Dictionary<RectTransform, Coroutine>();
+    private Coroutine _hoverEffectCoroutine;
+    private readonly Dictionary<RectTransform, Coroutine> _textPositionCoroutines = new Dictionary<RectTransform, Coroutine>();
 
-    private float width;
-    private float height;
-    private float widthDifference;
-    private float heightDifference;
-    private Vector2 originalPosition;
+    private float _width;
+    private float _height;
+    private float _widthDifference;
+    private float _heightDifference;
+    private Vector2 _originalPosition;
 
-    private readonly float effectDuration = 0.2f;
-    private readonly float xOffset = 25f;
+    private readonly float _effectDuration = 0.2f;
+    private readonly float _xOffset = 25f;
 
-    private readonly float yOffset = 15f;
-    private readonly float visibleText = 1.0f;
-    private readonly float invisibleText = 0.0f;
+    private readonly float _yOffset = 15f;
+    private readonly float _visibleText = 1.0f;
+    private readonly float _invisibleText = 0.0f;
 
     void Awake()
     {
-        rectTransform = GetComponent<RectTransform>();
-        button = GetComponent<Button>();
-        textArr = button.GetComponentsInChildren<TextMeshProUGUI>();
+        _rectTransform = GetComponent<RectTransform>();
+        _button = GetComponent<Button>();
+        _textArr = _button.GetComponentsInChildren<TextMeshProUGUI>();
 
         #if UNITY_EDITOR
-        if (textArr == null || textArr.Length < 1) { Debug.LogWarning($" [{gameObject.name}] No TextMeshProUGUI(Description) component found.  Parent: [{transform.parent.name}]"); }
+        if (_textArr == null || _textArr.Length < 1) { Debug.LogWarning($" [{gameObject.name}] No TextMeshProUGUI(Description) component found.  Parent: [{transform.parent.name}]"); }
         #endif
 
         InitOriginalValues();
@@ -54,13 +54,13 @@ public class HoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     void OnDisable()
     {
         StopAllCoroutines();
-        hoverEffectCoroutine = null;
-        textPositionCoroutines.Clear();
+        _hoverEffectCoroutine = null;
+        _textPositionCoroutines.Clear();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (!isSelected)
+        if (!_isSelected)
         {
             ApplyHoverEffect(true);
         }
@@ -68,7 +68,7 @@ public class HoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (!isSelected)
+        if (!_isSelected)
         {
             ApplyHoverEffect(false);
         }
@@ -76,62 +76,62 @@ public class HoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void OnSelect(BaseEventData eventData)
     {
-        isSelected = true;
+        _isSelected = true;
         ApplyHoverEffect(true);
     }
 
     public void OnDeselect(BaseEventData eventData)
     {
-        isSelected = false;
+        _isSelected = false;
         ApplyHoverEffect(false);
     }
 
     private void InitOriginalValues()
     {
-        if (textArr.Length < 2) { return; }
+        if (_textArr.Length < 2) { return; }
 
-        width = rectTransform.rect.width;
-        height = rectTransform.rect.height;
-        widthDifference = width - textArr[1].rectTransform.rect.width;
-        heightDifference = height - textArr[1].rectTransform.rect.height;
+        _width = _rectTransform.rect.width;
+        _height = _rectTransform.rect.height;
+        _widthDifference = _width - _textArr[1].rectTransform.rect.width;
+        _heightDifference = _height - _textArr[1].rectTransform.rect.height;
 
-        originalPosition = rectTransform.anchoredPosition;
+        _originalPosition = _rectTransform.anchoredPosition;
     }
 
     private void ApplyHoverEffect(bool isHovered)
     {
-        if (textArr.Length < 2) { return; }
+        if (_textArr.Length < 2) { return; }
 
-        Vector2 targetSize = isHovered ? new Vector2(width + widthDifference, height + heightDifference) : new Vector2(width, height);
-        Vector2 targetPosition = isHovered ? originalPosition + new Vector2(xOffset, 0) : originalPosition;
+        Vector2 targetSize = isHovered ? new Vector2(_width + _widthDifference, _height + _heightDifference) : new Vector2(_width, _height);
+        Vector2 targetPosition = isHovered ? _originalPosition + new Vector2(_xOffset, 0) : _originalPosition;
 
-        foreach (TextMeshProUGUI text in textArr)
+        foreach (TextMeshProUGUI text in _textArr)
         {
-            if (textPositionCoroutines.TryGetValue(text.rectTransform, out Coroutine currentCoroutine))
+            if (_textPositionCoroutines.TryGetValue(text.rectTransform, out Coroutine currentCoroutine))
             {
                 StopCoroutine(currentCoroutine);
-                textPositionCoroutines.Remove(text.rectTransform);
+                _textPositionCoroutines.Remove(text.rectTransform);
             }
 
             Vector2 textOriginalPosition = text.rectTransform.anchoredPosition;
-            Vector2 targetTextPosition = isHovered ? textOriginalPosition + new Vector2(0, yOffset) : textOriginalPosition - new Vector2(0, yOffset);
+            Vector2 targetTextPosition = isHovered ? textOriginalPosition + new Vector2(0, _yOffset) : textOriginalPosition - new Vector2(0, _yOffset);
 
             text.rectTransform.anchoredPosition = textOriginalPosition;
-            textPositionCoroutines[text.rectTransform] = StartCoroutine(LerpTextPosition(text.rectTransform, textOriginalPosition, targetTextPosition));
+            _textPositionCoroutines[text.rectTransform] = StartCoroutine(LerpTextPosition(text.rectTransform, textOriginalPosition, targetTextPosition));
         }
 
-        textArr[1].alpha = isHovered ? visibleText : invisibleText;
+        _textArr[1].alpha = isHovered ? _visibleText : _invisibleText;
 
-        if (hoverEffectCoroutine != null) { StopCoroutine(hoverEffectCoroutine); }
-        hoverEffectCoroutine = StartCoroutine(LerpHoverEffect(targetSize, targetPosition));
+        if (_hoverEffectCoroutine != null) { StopCoroutine(_hoverEffectCoroutine); }
+        _hoverEffectCoroutine = StartCoroutine(LerpHoverEffect(targetSize, targetPosition));
     }
 
     private IEnumerator LerpTextPosition(RectTransform rectTransform, Vector2 startPos, Vector2 targetPos)
     {
         float elapsedTime = 0f;
-        while (elapsedTime < effectDuration)
+        while (elapsedTime < _effectDuration)
         {
-            float time = elapsedTime / effectDuration;
+            float time = elapsedTime / _effectDuration;
             float easedTime = Mathf.SmoothStep(0, 1, time);
 
             rectTransform.anchoredPosition = Vector2.Lerp(startPos, targetPos, easedTime);
@@ -140,29 +140,29 @@ public class HoverEffect : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         }
 
         rectTransform.anchoredPosition = targetPos;
-        textPositionCoroutines.Remove(rectTransform);
+        _textPositionCoroutines.Remove(rectTransform);
     }
 
     private IEnumerator LerpHoverEffect(Vector2 targetSize, Vector2 targetPosition)
     {
-        Vector2 startSize = rectTransform.sizeDelta;
-        Vector2 startPosition = rectTransform.anchoredPosition;
+        Vector2 startSize = _rectTransform.sizeDelta;
+        Vector2 startPosition = _rectTransform.anchoredPosition;
 
         float elapsedTime = 0f;
-        while (elapsedTime < effectDuration)
+        while (elapsedTime < _effectDuration)
         {
-            float time = elapsedTime / effectDuration;
+            float time = elapsedTime / _effectDuration;
             float easedTime = Mathf.SmoothStep(0, 1, time);
 
-            rectTransform.sizeDelta = Vector2.Lerp(startSize, targetSize, easedTime);
-            rectTransform.anchoredPosition = Vector2.Lerp(startPosition, targetPosition, easedTime);
+            _rectTransform.sizeDelta = Vector2.Lerp(startSize, targetSize, easedTime);
+            _rectTransform.anchoredPosition = Vector2.Lerp(startPosition, targetPosition, easedTime);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        rectTransform.sizeDelta = targetSize;
-        rectTransform.anchoredPosition = targetPosition;
-        hoverEffectCoroutine = null;
+        _rectTransform.sizeDelta = targetSize;
+        _rectTransform.anchoredPosition = targetPosition;
+        _hoverEffectCoroutine = null;
     }
 
 

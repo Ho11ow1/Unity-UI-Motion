@@ -56,54 +56,53 @@ public class Motion : MonoBehaviour
     private TypeWrite typeWriterComponent;
 
     // Component variables
-    private CanvasGroup cg;
-    private RectTransform panel;
-    private TextMeshProUGUI[] texts;
-    private Image[] images;
-    private Button[] buttons;
-    private List<Image> imageList = new List<Image>();
+    private CanvasGroup _cg;
+    private RectTransform _panel;
+    private TextMeshProUGUI[] _texts;
+    private Image[] _images;
+    private Button[] _buttons;
+    private readonly List<Image> _imageList = new List<Image>();
 
     // Internal constants
     internal const int panelIndex = 0;
     internal const int textIndex = 1;
     internal const int imageIndex = 2;
     internal const int buttonIndex = 3;
-
-    private const float defaultDuration = 0.5f;
+    internal const float defaultDuration = 0.5f;
 
     void Awake()
     {
-        cg = GetComponent<CanvasGroup>();
+        _cg = GetComponent<CanvasGroup>();
 
-        texts = GetComponentsInChildren<TextMeshProUGUI>();
+        _texts = GetComponentsInChildren<TextMeshProUGUI>();
 
         foreach (RectTransform child in transform)
         {
             Image img = child.GetComponent<Image>();
             if (img != null)
             {
-                imageList.Add(img);
+                _imageList.Add(img);
             }
         }
-        images = imageList.ToArray();
+        _images = _imageList.ToArray();
 
-        buttons = GetComponentsInChildren<Button>();
+        _buttons = GetComponentsInChildren<Button>();
 
-        panel = GetComponent<RectTransform>();
+        _panel = GetComponent<RectTransform>();
 
         #if UNITY_EDITOR
-        if (cg == null) { Debug.LogWarning($"[{gameObject.name}] No CanvasGroup component found."); }
-        if (texts == null) { Debug.LogWarning($"[{gameObject.name}] No Text component found in children. Parent: [{transform.parent.name ?? "none"}]"); }
-        if (images == null) { Debug.LogWarning($"[{gameObject.name}] No Image component found in children. Parent: [{transform.parent.name ?? "none"}]"); }
-        if (buttons == null) { Debug.LogWarning($"[{gameObject.name}] No Button component found in children. Parent: [{transform.parent.name ?? "none"}]"); }
-        if (panel == null) { Debug.LogWarning($"[{gameObject.name}] No RectTransform component found."); }
+        if (_cg == null) { Debug.LogWarning($"[{gameObject.name}] No CanvasGroup component found."); }
+        if (_texts == null) { Debug.LogWarning($"[{gameObject.name}] No Text component found in children. Parent: [{transform.parent.name ?? "none"}]"); }
+        if (_images == null) { Debug.LogWarning($"[{gameObject.name}] No Image component found in children. Parent: [{transform.parent.name ?? "none"}]"); }
+        if (_buttons == null) { Debug.LogWarning($"[{gameObject.name}] No Button component found in children. Parent: [{transform.parent.name ?? "none"}]"); }
+        if (_panel == null) { Debug.LogWarning($"[{gameObject.name}] No RectTransform component found."); }
         #endif
 
-        fadeComponent = new Fade(cg, this);
-        transitionComponent = new Transition(texts, images, buttons, panel, this);
-        scalingComponent = new Scale(texts, images, buttons, panel, this);
-        rotationComponent = new Rotate(texts, images, buttons, panel, this);
-        typeWriterComponent = new TypeWrite(texts, this);
+        fadeComponent = new Fade(_cg, this);
+        transitionComponent = new Transition(_texts, _images, _buttons, _panel, this);
+        scalingComponent = new Scale(_texts, _images, _buttons, _panel, this);
+        rotationComponent = new Rotate(_texts, _images, _buttons, _panel, this);
+        typeWriterComponent = new TypeWrite(_texts, this);
     }
 
     // ----------------------------------------------------- Fade API -----------------------------------------------------

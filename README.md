@@ -106,7 +106,7 @@ public class Example : MonoBehaviour
     public void ShowPopup()
     {
         panelMotion.FadeIn(0f, 0.75f);
-        panelMotion.TransitionFromLeft(Motion.TransitionTarget.Image, 1, 50f, Motion.EasingType.EaseIn, 1.5f);
+        panelMotion.TransitionFromLeft(Motion.AnimationTarget.Image, 1, 50f, Motion.EasingType.EaseIn, 1.5f);
     }
 
     public void HidePopup()
