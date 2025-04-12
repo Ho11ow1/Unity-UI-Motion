@@ -61,7 +61,6 @@ public class Motion : MonoBehaviour
     private TextMeshProUGUI[] _texts;
     private Image[] _images;
     private Button[] _buttons;
-    private readonly List<Image> _imageList = new List<Image>();
 
     // Internal constants
     internal const int panelIndex = 0;
@@ -76,15 +75,15 @@ public class Motion : MonoBehaviour
 
         _texts = GetComponentsInChildren<TextMeshProUGUI>();
 
+        var imageList = new List<Image>();
         foreach (RectTransform child in transform)
         {
-            Image img = child.GetComponent<Image>();
-            if (img != null)
+            if (child.TryGetComponent<Image>(out var img))
             {
-                _imageList.Add(img);
+                imageList.Add(img);
             }
         }
-        _images = _imageList.ToArray();
+        _images = imageList.ToArray();
 
         _buttons = GetComponentsInChildren<Button>();
 

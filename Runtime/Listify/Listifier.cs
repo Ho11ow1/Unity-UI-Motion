@@ -51,7 +51,7 @@ public class Listifier : MonoBehaviour
     // ----------------------------------------------------- PUBLIC API -----------------------------------------------------
 
     /// <summary>
-    /// Creates a vertical list of interactable _buttons
+    /// Creates a vertical list of interactable buttons
     /// </summary>
     /// <param name="pairs">KeyValuePair list for _button title + description</param>
     /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). Positive values move the 2nd+ element down</param>
@@ -64,7 +64,7 @@ public class Listifier : MonoBehaviour
     }
 
     /// <summary>
-    /// Creates a horizontal list of interactable _buttons
+    /// Creates a horizontal list of interactable buttons
     /// </summary>
     /// <param name="pairs">KeyValuePair list for _button title + description</param>
     /// <param name="offset">Offset in pixels (or units depending on canvas scaling and render mode). Positive values move the 2nd+ element to the right</param>
@@ -85,7 +85,7 @@ public class Listifier : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets the _button navigation explicitly based on direction
+    /// Sets the button navigation explicitly based on direction
     /// </summary>
     /// <param name="direction">Direction in which the UI should navigate. Vertical:Up,Down - Horizontal:Left,Right</param>
     public void SetNavigation(ListDirection direction)
@@ -144,7 +144,7 @@ public class Listifier : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets _button onClick events in order
+    /// Sets button onClick events in order
     /// </summary>
     /// <param name="event1">Function to be called on the first _button</param>
     /// <param name="event2">Function to be called on the second _button</param>
@@ -169,7 +169,7 @@ public class Listifier : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets the _button navigation explicitly based on direction with onClick events in order
+    /// Sets the button navigation explicitly based on direction with onClick events in order
     /// </summary>
     /// <param name="direction">Direction in which the UI should navigate. Vertical:Up,Down - Horizontal:Left,Right</param>
     /// <param name="event1">Function to be called on the first _button</param>
