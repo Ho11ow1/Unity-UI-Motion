@@ -97,7 +97,7 @@ public class Motion : MonoBehaviour
         if (_panel == null) { Debug.LogWarning($"[{gameObject.name}] No RectTransform component found."); }
         #endif
 
-        fadeComponent = new Fade(_cg, this);
+        fadeComponent = new Fade(_texts, _images, _buttons, _cg, this);
         transitionComponent = new Transition(_texts, _images, _buttons, _panel, this);
         scalingComponent = new Scale(_texts, _images, _buttons, _panel, this);
         rotationComponent = new Rotate(_texts, _images, _buttons, _panel, this);
@@ -107,39 +107,38 @@ public class Motion : MonoBehaviour
     // ----------------------------------------------------- Fade API -----------------------------------------------------
 
     /// <summary>
-    /// Immediately sets the UI element to be invisible without an animation
+    /// Immediately sets the UI panel visibility
     /// </summary>
-    public void TurnInvisible()
+    /// <param name="visible">Sets the panel visibility condition</param>
+    public void SetPanelVisibility(bool visible)
     {
-        fadeComponent.TurnInvisible();
+        fadeComponent.SetPanelVisibility(visible);
     }
 
     /// <summary>
-    /// Immediately sets the UI element to be visible without an animation
+    /// Fades in the UI element
     /// </summary>
-    public void TurnVisible()
-    {
-        fadeComponent.TurnVisible();
-    }
-
-    /// <summary>
-    /// Fades in the UI element with a custom delay and duration
-    /// </summary>
+    /// <param name="target">Target component to transition (Panel, Text, Image, Button)</param>
+    /// <param name="occurrence">Specifies the instance of the target element</param>
+    /// <param name="duration">Time in seconds for the fading duration</param>
     /// <param name="delay">Time in seconds to wait before starting the fade</param>
-    /// <param name="duration">Time in seconds the fade animation should take</param>
-    public void FadeIn(float delay = 0f, float duration = defaultDuration)
+    public void FadeIn(AnimationTarget target, int occurrence, float duration = defaultDuration, float delay = 0f)
     {
-        fadeComponent.FadeIn(delay, duration, fadeStart, fadeEnd);
+        occurrence -= 1;
+        fadeComponent.FadeIn(target, occurrence, duration, delay, fadeStart, fadeEnd);
     }
 
     /// <summary>
-    /// Fades out the UI element with a custom delay and duration
+    /// Fades out the UI element
     /// </summary>
+    /// <param name="target">Target component to transition (Panel, Text, Image, Button)</param>
+    /// <param name="occurrence">Specifies the instance of the target element</param>
+    /// <param name="duration">Time in seconds for the fading duration</param>
     /// <param name="delay">Time in seconds to wait before starting the fade</param>
-    /// <param name="duration">Time in seconds the fade animation should take</param>
-    public void FadeOut(float delay = 0f, float duration = defaultDuration)
+    public void FadeOut(AnimationTarget target, int occurrence, float duration = defaultDuration, float delay = 0f)
     {
-        fadeComponent.FadeOut(delay, duration, fadeStart, fadeEnd);
+        occurrence -= 1;
+        fadeComponent.FadeOut(target, occurrence, duration, delay, fadeStart, fadeEnd);
     }
 
     // ----------------------------------------------------- Transition API -----------------------------------------------------
