@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using TMPro;
 
@@ -11,12 +12,25 @@ using TMPro;
  * A base class for UI animation components providing
  * common functionality for internal classes.
  * 
- * Version: 2.1.0
+ * Version: 2.2.1
  * GitHub: https://github.com/Hollow1/Unity-UI-Motion
  * -------------------------------------------------------- */
 
+#pragma warning disable IDE0090 // Use 'new'
+#pragma warning disable IDE1006 // Naming Styles
 public class Motion : MonoBehaviour
 {
+    public static event UnityAction fadeStart;
+    public static event UnityAction fadeEnd;
+    public static event UnityAction transitionStart;
+    public static event UnityAction transitionEnd;
+    public static event UnityAction scaleStart;
+    public static event UnityAction scaleEnd;
+    public static event UnityAction rotateStart;
+    public static event UnityAction rotateEnd;
+    public static event UnityAction typeWriteStart;
+    public static event UnityAction typeWriteEnd;
+
     public enum AnimationTarget
     {
         Panel,
@@ -42,92 +56,89 @@ public class Motion : MonoBehaviour
     private TypeWrite typeWriterComponent;
 
     // Component variables
-    private CanvasGroup cg;
-    private RectTransform panel;
-    private TextMeshProUGUI[] texts;
-    private Image[] images;
-    private Button[] buttons;
-    private List<Image> imageList = new List<Image>();
+    private CanvasGroup _cg;
+    private RectTransform _panel;
+    private TextMeshProUGUI[] _texts;
+    private Image[] _images;
+    private Button[] _buttons;
 
     // Internal constants
     internal const int panelIndex = 0;
     internal const int textIndex = 1;
     internal const int imageIndex = 2;
     internal const int buttonIndex = 3;
-
-    private const float defaultDuration = 0.5f;
+    internal const float defaultDuration = 0.5f;
 
     void Awake()
     {
-        cg = GetComponent<CanvasGroup>() ?? gameObject.AddComponent<CanvasGroup>();
+        _cg = GetComponent<CanvasGroup>();
 
-        texts = GetComponentsInChildren<TextMeshProUGUI>();
+        _texts = GetComponentsInChildren<TextMeshProUGUI>();
 
+        var imageList = new List<Image>();
         foreach (RectTransform child in transform)
         {
-            Image img = child.GetComponent<Image>();
-            if (img != null)
+            if (child.TryGetComponent<Image>(out var img))
             {
                 imageList.Add(img);
             }
         }
-        images = imageList.ToArray();
+        _images = imageList.ToArray();
 
-        buttons = GetComponentsInChildren<Button>();
+        _buttons = GetComponentsInChildren<Button>();
 
-        panel = GetComponent<RectTransform>();
+        _panel = GetComponent<RectTransform>();
 
         #if UNITY_EDITOR
-        if (cg == null) { Debug.LogWarning($"[{gameObject.name}] No CanvasGroup component found, added automatically."); }
-        if (texts == null) { Debug.LogWarning($"[{gameObject.name}] No Text component found in children. Parent: [{transform.parent.name ?? "none"}]"); }
-        if (images == null) { Debug.LogWarning($"[{gameObject.name}] No Image component found in children. Parent: [{transform.parent.name ?? "none"}]"); }
-        if (buttons == null) { Debug.LogWarning($"[{gameObject.name}] No Button component found in children. Parent: [{transform.parent.name ?? "none"}]"); }
-        if (panel == null) { Debug.LogWarning($"[{gameObject.name}] No RectTransform component found."); }
+        if (_cg == null) { Debug.LogWarning($"[{gameObject.name}] No CanvasGroup component found."); }
+        if (_texts == null) { Debug.LogWarning($"[{gameObject.name}] No Text component found in children. Parent: [{transform.parent.name ?? "none"}]"); }
+        if (_images == null) { Debug.LogWarning($"[{gameObject.name}] No Image component found in children. Parent: [{transform.parent.name ?? "none"}]"); }
+        if (_buttons == null) { Debug.LogWarning($"[{gameObject.name}] No Button component found in children. Parent: [{transform.parent.name ?? "none"}]"); }
+        if (_panel == null) { Debug.LogWarning($"[{gameObject.name}] No RectTransform component found."); }
         #endif
 
-        fadeComponent = new Fade(cg, this);
-        transitionComponent = new Transition(texts, images, buttons, panel, this);
-        scalingComponent = new Scale(texts, images, buttons, panel, this);
-        rotationComponent = new Rotate(texts, images, buttons, panel, this);
-        typeWriterComponent = new TypeWrite(texts, this);
+        fadeComponent = new Fade(_texts, _images, _buttons, _cg, this);
+        transitionComponent = new Transition(_texts, _images, _buttons, _panel, this);
+        scalingComponent = new Scale(_texts, _images, _buttons, _panel, this);
+        rotationComponent = new Rotate(_texts, _images, _buttons, _panel, this);
+        typeWriterComponent = new TypeWrite(_texts, this);
     }
 
     // ----------------------------------------------------- Fade API -----------------------------------------------------
 
     /// <summary>
-    /// Immediately sets the UI element to be invisible without an animation
+    /// Immediately sets the UI panel visibility
     /// </summary>
-    public void TurnInvisible()
+    /// <param name="visible">Sets the panel visibility condition</param>
+    public void SetPanelVisibility(bool visible)
     {
-        fadeComponent.TurnInvisible();
+        fadeComponent.SetPanelVisibility(visible);
     }
 
     /// <summary>
-    /// Immediately sets the UI element to be visible without an animation
+    /// Fades in the UI element
     /// </summary>
-    public void TurnVisible()
-    {
-        fadeComponent.TurnVisible();
-    }
-
-    /// <summary>
-    /// Fades in the UI element with a custom delay and duration
-    /// </summary>
+    /// <param name="target">Target component to transition (Panel, Text, Image, Button)</param>
+    /// <param name="occurrence">Specifies the instance of the target element</param>
+    /// <param name="duration">Time in seconds for the fading duration</param>
     /// <param name="delay">Time in seconds to wait before starting the fade</param>
-    /// <param name="duration">Time in seconds the fade animation should take</param>
-    public void FadeIn(float delay = 0f, float duration = defaultDuration)
+    public void FadeIn(AnimationTarget target, int occurrence, float duration = defaultDuration, float delay = 0f)
     {
-        fadeComponent.FadeIn(delay, duration);
+        occurrence -= 1;
+        fadeComponent.FadeIn(target, occurrence, duration, delay, fadeStart, fadeEnd);
     }
 
     /// <summary>
-    /// Fades out the UI element with a custom delay and duration
+    /// Fades out the UI element
     /// </summary>
+    /// <param name="target">Target component to transition (Panel, Text, Image, Button)</param>
+    /// <param name="occurrence">Specifies the instance of the target element</param>
+    /// <param name="duration">Time in seconds for the fading duration</param>
     /// <param name="delay">Time in seconds to wait before starting the fade</param>
-    /// <param name="duration">Time in seconds the fade animation should take</param>
-    public void FadeOut(float delay = 0f, float duration = defaultDuration)
+    public void FadeOut(AnimationTarget target, int occurrence, float duration = defaultDuration, float delay = 0f)
     {
-        fadeComponent.FadeOut(delay, duration);
+        occurrence -= 1;
+        fadeComponent.FadeOut(target, occurrence, duration, delay, fadeStart, fadeEnd);
     }
 
     // ----------------------------------------------------- Transition API -----------------------------------------------------
@@ -144,7 +155,7 @@ public class Motion : MonoBehaviour
     public void TransitionFromUp(AnimationTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
-        transitionComponent.TransitionFromUp(target, occurrence, offset, easing, duration, delay);
+        transitionComponent.TransitionFromUp(target, occurrence, offset, easing, duration, delay, transitionStart, transitionEnd);
     }
 
     /// <summary>
@@ -159,7 +170,7 @@ public class Motion : MonoBehaviour
     public void TransitionFromDown(AnimationTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
-        transitionComponent.TransitionFromDown(target, occurrence, offset, easing, duration, delay);
+        transitionComponent.TransitionFromDown(target, occurrence, offset, easing, duration, delay, transitionStart, transitionEnd);
     }
 
     /// <summary>
@@ -174,7 +185,7 @@ public class Motion : MonoBehaviour
     public void TransitionFromLeft(AnimationTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
-        transitionComponent.TransitionFromLeft(target, occurrence, offset, easing, duration, delay);
+        transitionComponent.TransitionFromLeft(target, occurrence, offset, easing, duration, delay, transitionStart, transitionEnd);
     }
 
     /// <summary>
@@ -189,7 +200,7 @@ public class Motion : MonoBehaviour
     public void TransitionFromRight(AnimationTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
-        transitionComponent.TransitionFromRight(target, occurrence, offset, easing, duration, delay);
+        transitionComponent.TransitionFromRight(target, occurrence, offset, easing, duration, delay, transitionStart, transitionEnd);
     }
 
     /// <summary>
@@ -204,7 +215,7 @@ public class Motion : MonoBehaviour
     public void TransitionFromPosition(AnimationTarget target, int occurrence, Vector2 offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
-        transitionComponent.TransitionFromPosition(target, occurrence, offset, easing, duration, delay);
+        transitionComponent.TransitionFromPosition(target, occurrence, offset, easing, duration, delay, transitionStart, transitionEnd);
     }
 
     /// <summary>
@@ -219,7 +230,7 @@ public class Motion : MonoBehaviour
     public void TransitionToUp(AnimationTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
-        transitionComponent.TransitionToUp(target, occurrence, offset, easing, duration, delay);
+        transitionComponent.TransitionToUp(target, occurrence, offset, easing, duration, delay, transitionStart, transitionEnd);
     }
 
     /// <summary>
@@ -234,7 +245,7 @@ public class Motion : MonoBehaviour
     public void TransitionToDown(AnimationTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
-        transitionComponent.TransitionToDown(target, occurrence, offset, easing, duration, delay);
+        transitionComponent.TransitionToDown(target, occurrence, offset, easing, duration, delay, transitionStart, transitionEnd);
     }
 
     /// <summary>
@@ -249,7 +260,7 @@ public class Motion : MonoBehaviour
     public void TransitionToLeft(AnimationTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
-        transitionComponent.TransitionToLeft(target, occurrence, offset, easing, duration, delay);
+        transitionComponent.TransitionToLeft(target, occurrence, offset, easing, duration, delay, transitionStart, transitionEnd);
     }
 
     /// <summary>
@@ -264,7 +275,7 @@ public class Motion : MonoBehaviour
     public void TransitionToRight(AnimationTarget target, int occurrence, float offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
-        transitionComponent.TransitionToRight(target, occurrence, offset, easing, duration, delay);
+        transitionComponent.TransitionToRight(target, occurrence, offset, easing, duration, delay, transitionStart, transitionEnd);
     }
 
     /// <summary>
@@ -279,7 +290,7 @@ public class Motion : MonoBehaviour
     public void TransitionToPosition(AnimationTarget target, int occurrence, Vector2 offset, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
-        transitionComponent.TransitionToPosition(target, occurrence, offset, easing, duration, delay);
+        transitionComponent.TransitionToPosition(target, occurrence, offset, easing, duration, delay, transitionStart, transitionEnd);
     }
 
     // ----------------------------------------------------- Rotation API -----------------------------------------------------
@@ -296,7 +307,7 @@ public class Motion : MonoBehaviour
     public void Rotate(AnimationTarget target, int occurrence, float degrees, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
-        rotationComponent.Rotation(target, occurrence, degrees, easing, duration, delay);
+        rotationComponent.Rotation(target, occurrence, degrees, easing, duration, delay, rotateStart, rotateEnd);
     }
 
     // ----------------------------------------------------- Scaling API -----------------------------------------------------
@@ -313,7 +324,7 @@ public class Motion : MonoBehaviour
     public void ScaleUp(AnimationTarget target, int occurrence, float multiplier, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
-        scalingComponent.ScaleUp(target, occurrence, multiplier, easing, duration, delay);
+        scalingComponent.ScaleUp(target, occurrence, multiplier, easing, duration, delay, scaleStart, scaleEnd);
     }
 
     /// <summary>
@@ -328,7 +339,7 @@ public class Motion : MonoBehaviour
     public void ScaleDown(AnimationTarget target, int occurrence, float multiplier, EasingType easing = EasingType.Linear, float duration = defaultDuration, float delay = 0f)
     {
         occurrence -= 1;
-        scalingComponent.ScaleDown(target, occurrence, multiplier, easing, duration, delay);
+        scalingComponent.ScaleDown(target, occurrence, multiplier, easing, duration, delay, scaleStart, scaleEnd);
     }
 
     // ----------------------------------------------------- TypeWriter API -----------------------------------------------------
@@ -342,7 +353,7 @@ public class Motion : MonoBehaviour
     public void TypeWrite(int occurrence, float delay = 0.3f, float duration = 3f)
     {
         occurrence -= 1;
-        typeWriterComponent.TypeWriter(occurrence, delay, duration);
+        typeWriterComponent.TypeWriter(occurrence, delay, duration, typeWriteStart, typeWriteEnd);
     }
 
 

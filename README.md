@@ -65,10 +65,53 @@ public class Example : MonoBehaviour
         panelListifier = panel.GetComponent<Listifier>();
         eventSystem = FindAnyObjectByType<EventSystem>();
 
-        panelMotion.TurnInvisible();
+        panelMotion.SetPanelVisibility(false);
+
+        Motion.fadeStart += OnStart;
+        Motion.fadeEnd += OnEnd;
     }
 
     void Start()
+    {
+        CreateMenuList();
+
+        objectList = panelListifier.GetObjectList();
+        eventSystem.SetSelectedGameObject(objectList[0]);
+    }
+
+    void OnDisable()
+    {
+        Motion.fadeStart -= OnStart;
+        Motion.fadeEnd -= OnEnd;
+    }
+
+    public void ShowPopup()
+    {
+        panelMotion.FadeIn(Motion.AnimationTarget.Panel, 1, 0.75f);
+        panelMotion.TransitionFromLeft(Motion.AnimationTarget.Image, 1, 50f, Motion.EasingType.EaseIn, 1.5f);
+    }
+
+    public void HidePopup()
+    {
+        panelMotion.FadeOut(Motion.AnimationTarget.Panel, 1, 0.5f, 1.5f);
+    }
+
+    private void Log()
+    {
+        Debug.Log("Button pressed");
+    }
+
+    private void OnStart()
+    {
+        Debug.Log("Animation started: " + Time.time);
+    }
+
+    private void OnEnd()
+    {
+        Debug.Log("Animation finished: " + Time.time);
+    }
+
+    private void CreateMenuList()
     {
         var menuList = new List<KeyValuePair<string, string>>
         {
@@ -89,28 +132,7 @@ public class Example : MonoBehaviour
 
         // Single combined function
         // panelListifier.SetNavigationWithEvents()
-
-        objectList = panelListifier.GetObjectList();
-        eventSystem.SetSelectedGameObject(objectList[0]);
     }
-
-    public void ShowPopup()
-    {
-        panelMotion.FadeIn(0f, 0.75f);
-        panelMotion.TransitionFromLeft(Motion.AnimationTarget.Image, 1, 50f, Motion.EasingType.EaseIn, 1.5f);
-    }
-
-    public void HidePopup()
-    {
-        panelMotion.FadeOut(0f, 1f);
-    }
-
-    private void Log()
-    {
-        Debug.Log("Button pressed");
-    }
-
-
 }
 
 ```
