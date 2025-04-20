@@ -51,8 +51,8 @@ public class Motion : MonoBehaviour
     // Class variables
     private Fade fadeComponent;
     private Transition transitionComponent;
-    private Scale scalingComponent;
     private Rotate rotationComponent;
+    private Scale scalingComponent;
     private TypeWrite typeWriterComponent;
 
     // Component variables
@@ -99,8 +99,8 @@ public class Motion : MonoBehaviour
 
         fadeComponent = new Fade(_texts, _images, _buttons, _cg, this);
         transitionComponent = new Transition(_texts, _images, _buttons, _panel, this);
-        scalingComponent = new Scale(_texts, _images, _buttons, _panel, this);
         rotationComponent = new Rotate(_texts, _images, _buttons, _panel, this);
+        scalingComponent = new Scale(_texts, _images, _buttons, _panel, this);
         typeWriterComponent = new TypeWrite(_texts, this);
     }
 
