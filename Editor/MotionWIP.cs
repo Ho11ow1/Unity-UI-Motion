@@ -1,9 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEditor;
-using UnityEngine.UI;
 using TMPro;
 
 #pragma warning disable IDE0090 // Use 'new(...)'
@@ -26,31 +24,23 @@ public class MotionWIP : EditorWindow
     // Size variables
     private readonly GUILayoutOption _labelWidth = GUILayout.Width(52);
     private readonly GUILayoutOption _inputWidth = GUILayout.Width(30);
+    private readonly GUILayoutOption _vectorWidth = GUILayout.Width(100);
     private const int _selectWidth = 55;
     private const int _childIndent = 15;
     private const int _dropdownWidth = 96;
 
-    // Text variables
-    private const string _findText = "Find";
-    // Animation variables
-    private const string _animationText = "Animation";
-    private const string _fadeText = "Fade";
-    private const string _transitionText = "Transition";
-    private const string _scaleText = "Scale";
-    private const string _rotateText = "Rotate";
-    private const string _typeWriteText = "TypeWrite";
     // Conveluted KeyValuePair finally works
     private readonly Dictionary<GameObject, Dictionary<int, Dictionary<RectTransform, AnimationData>>> _panelDataMap = 
                 new Dictionary<GameObject, Dictionary<int, Dictionary<RectTransform, AnimationData>>>();
-    private const int _textIndex = 0;
-    private const int _imageIndex = 1;
-    private const int _buttonIndex = 2;
+    internal const int _textIndex = 0;
+    internal const int _imageIndex = 1;
+    internal const int _buttonIndex = 2;
 
     [MenuItem("Window/Motion/Motion WIP")]
     public static void ShowWindow()
     {
         window = GetWindow<MotionWIP>("Motion WIP");
-        window.position = new Rect(650, 250, 650, 550);
+        window.position = new Rect(550, 250, 700, 550);
         window.Show();
     }
 
@@ -106,7 +96,7 @@ public class MotionWIP : EditorWindow
                 }
 
                 GUI.backgroundColor = _btnColour;
-                if (GUILayout.Button(_findText, GUILayout.Width(_selectWidth)))
+                if (GUILayout.Button("Find", GUILayout.Width(_selectWidth)))
                 {
                     Selection.activeGameObject = obj;
                     EditorGUIUtility.PingObject(obj);
@@ -197,7 +187,7 @@ public class MotionWIP : EditorWindow
 
             if (_selectedForCodeGen == rect)
             {
-                (AnimationData dataPoint, int indexPoint, string type) = GetTupleAnimationData(rect);
+                (AnimationData dataPoint, int indexPoint, string type) = AnimationData.GetTupleAnimationData(rect, _panelDataMap);
                 if (dataPoint != null)
                 {
                     GenerateMotionCode(dataPoint, indexPoint, type);
@@ -208,7 +198,7 @@ public class MotionWIP : EditorWindow
 
     private void DrawAnimationControls(RectTransform rect)
     {
-        AnimationData data = GetAnimationData(rect);
+        AnimationData data = AnimationData.GetAnimationData(rect, _panelDataMap);
         GUILayout.BeginHorizontal(_childrenStyle);
 
         GUIContent content = new GUIContent(data.animation, EditorGUIUtility.IconContent("d_UnityEditor.ConsoleWindow").image);
@@ -221,19 +211,35 @@ public class MotionWIP : EditorWindow
         if (clicked)
         {
             GenericMenu menu = new GenericMenu();
-            menu.AddItem(new GUIContent(_fadeText), data.animation == _fadeText, (userData) => OnSelected((RectTransform)userData, _fadeText), rect);
-            menu.AddItem(new GUIContent(_transitionText), data.animation == _transitionText, (userData) => OnSelected((RectTransform)userData, _transitionText), rect);
-            menu.AddItem(new GUIContent(_rotateText), data.animation == _rotateText, (userData) => OnSelected((RectTransform)userData, _rotateText), rect);
-            menu.AddItem(new GUIContent(_scaleText), data.animation == _scaleText, (userData) => OnSelected((RectTransform)userData, _scaleText), rect);
-            if (rect.gameObject.GetComponent<TextMeshProUGUI>())
-            {
-                menu.AddItem(new GUIContent(_typeWriteText), data.animation == _typeWriteText, (userData) => OnSelected((RectTransform)userData, _typeWriteText), rect);
-            }
+                // Fade
+                menu.AddItem(new GUIContent(AnimationData._fadeText + "/FadeIn"), data.animation == "FadeIn", (userData) => OnSelected((RectTransform)userData, "FadeIn"), rect);
+                menu.AddItem(new GUIContent(AnimationData._fadeText + "/FadeOut"), data.animation == "FadeOut", (userData) => OnSelected((RectTransform)userData, "FadeOut"), rect);
+                // Transition
+                menu.AddItem(new GUIContent(AnimationData._transitionText + "/TransitionFromUp"), data.animation == "TransitionFromUp", (userData) => OnSelected((RectTransform)userData, "TransitionFromUp"), rect);
+                menu.AddItem(new GUIContent(AnimationData._transitionText + "/TransitionFromDown"), data.animation == "TransitionFromDown", (userData) => OnSelected((RectTransform)userData, "TransitionFromDown"), rect);
+                menu.AddItem(new GUIContent(AnimationData._transitionText + "/TransitionFromLeft"), data.animation == "TransitionFromLeft", (userData) => OnSelected((RectTransform)userData, "TransitionFromLeft"), rect);
+                menu.AddItem(new GUIContent(AnimationData._transitionText + "/TransitionFromRight"), data.animation == "TransitionFromRight", (userData) => OnSelected((RectTransform)userData, "TransitionFromRight"), rect);
+                menu.AddItem(new GUIContent(AnimationData._transitionText + "/TransitionFromPosition"), data.animation == "TransitionFromPosition", (userData) => OnSelected((RectTransform)userData, "TransitionFromPosition"), rect);
+                menu.AddItem(new GUIContent(AnimationData._transitionText + "/TransitionToUp"), data.animation == "TransitionToUp", (userData) => OnSelected((RectTransform)userData, "TransitionToUp"), rect);
+                menu.AddItem(new GUIContent(AnimationData._transitionText + "/TransitionToDown"), data.animation == "TransitionToDown", (userData) => OnSelected((RectTransform)userData, "TransitionToDown"), rect);
+                menu.AddItem(new GUIContent(AnimationData._transitionText + "/TransitionToLeft"), data.animation == "TransitionToLeft", (userData) => OnSelected((RectTransform)userData, "TransitionToLeft"), rect);
+                menu.AddItem(new GUIContent(AnimationData._transitionText + "/TransitionToRight"), data.animation == "TransitionToRight", (userData) => OnSelected((RectTransform)userData, "TransitionToRight"), rect);
+                menu.AddItem(new GUIContent(AnimationData._transitionText + "/TransitionToPosition"), data.animation == "TransitionToPosition", (userData) => OnSelected((RectTransform)userData, "TransitionToPosition"), rect);
+                // Rotate
+                menu.AddItem(new GUIContent(AnimationData._rotateText), data.animation == AnimationData._rotateText, (userData) => OnSelected((RectTransform)userData, AnimationData._rotateText), rect);
+                // Scale
+                menu.AddItem(new GUIContent(AnimationData._scaleText + "/ScaleUp"), data.animation == "ScaleUp", (userData) => OnSelected((RectTransform)userData, "ScaleUp"), rect);
+                menu.AddItem(new GUIContent(AnimationData._scaleText + "/ScaleDown"), data.animation == "ScaleDown", (userData) => OnSelected((RectTransform)userData, "ScaleDown"), rect);
+                // TypeWrite
+                if (rect.gameObject.GetComponent<TextMeshProUGUI>())
+                {
+                    menu.AddItem(new GUIContent(AnimationData._typeWriteText), data.animation == AnimationData._typeWriteText, (userData) => OnSelected((RectTransform)userData, AnimationData._typeWriteText), rect);
+                }
 
             menu.DropDown(menuPos);
         }
 
-        if (data.animation != "" && data.animation != _animationText)
+        if (data.animation != "" && data.animation != AnimationData._animationText)
         {
             EditorGUILayout.LabelField("Duration:", _labelWidth);
             data.duration = EditorGUILayout.FloatField(data.duration, _inputWidth);
@@ -242,17 +248,25 @@ public class MotionWIP : EditorWindow
             data.delay = EditorGUILayout.FloatField(data.delay, _inputWidth);
         }
 
-        if (data.animation == _transitionText)
+        if (data.animation.StartsWith(AnimationData._transitionText))
         {
-            EditorGUILayout.LabelField("Offset:", _labelWidth);
-            data.offset = EditorGUILayout.FloatField(data.offset, _inputWidth);
+            if (data.animation == "TransitionFromPosition" || data.animation == "TransitionToPosition")
+            {
+                EditorGUILayout.LabelField("Offset:", _labelWidth);
+                data.vector = EditorGUILayout.Vector2Field("", data.vector, _vectorWidth);
+            }
+            else
+            {
+                EditorGUILayout.LabelField("Offset:", _labelWidth);
+                data.offset = EditorGUILayout.FloatField(data.offset, _inputWidth);
+            }
         }
-        else if (data.animation == _rotateText)
+        else if (data.animation == AnimationData._rotateText)
         {
             EditorGUILayout.LabelField("Degrees:", _labelWidth);
             data.degrees = EditorGUILayout.FloatField(data.degrees, _inputWidth);
         }
-        else if (data.animation == _scaleText)
+        else if (data.animation.StartsWith(AnimationData._scaleText))
         {
             EditorGUILayout.LabelField("Multiplier:", _labelWidth);
             data.multiplier = EditorGUILayout.FloatField(data.multiplier, _inputWidth);
@@ -271,7 +285,7 @@ public class MotionWIP : EditorWindow
     {
         if (rect != null)
         {
-            AnimationData data = GetAnimationData(rect);
+            AnimationData data = AnimationData.GetAnimationData(rect, _panelDataMap);
             data.animation = animation;
             //Debug.Log("Selected animation: " + animation + "\n" +
             //          "Object: " + rect.gameObject.name +
@@ -285,38 +299,20 @@ public class MotionWIP : EditorWindow
 
     private void GenerateMotionCode(AnimationData data, int occurrence, string type)
     {
-        if (data.animation == _animationText || string.IsNullOrEmpty(data.animation))
+        if (data.animation == AnimationData._animationText || string.IsNullOrEmpty(data.animation))
         {
             EditorGUILayout.HelpBox("Please select an animation type first", MessageType.Warning);
             return;
         }
 
-        string animationString = "";
-        switch (data.animation)
-        {
-            case _fadeText:
-                animationString = "Fade";// Add FadeIn/Out dropdown
-                break;
-            case _transitionText:
-                animationString = "Transition";// Add TransitionDirections dropdown
-                break;
-            case _rotateText:
-                animationString = "Rotate";
-                break;
-            case _scaleText:
-                animationString = "Scale";
-                break;
-            case _typeWriteText:
-                animationString = "TypeWrite";
-                break;
-        }
+        string animationString = AnimationData.GetAnimationString(data);
 
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-        float codeWidth = 550f;
+        float codeWidth = 650f;
         string[] labels = 
         { 
             "[SerializeField] private GameObject panel;", 
-            "private Motion animator;", 
+            "private Motion animator;\n", 
             "void Awake()", 
             "    animator = panel.GetComponent<Motion>();", "private void PlayAnimation()" 
         };
@@ -338,12 +334,12 @@ public class MotionWIP : EditorWindow
         EditorGUILayout.LabelField("{", GUILayout.Width(codeWidth));
 
         string parameters = $"{type}, {occurrence}";
-        if (data.animation == _typeWriteText)
+        if (data.animation == AnimationData._typeWriteText)
         {
             parameters = $"{occurrence}";
         }
 
-        if (data.animation == _typeWriteText)
+        if (data.animation == AnimationData._typeWriteText)
         {
             if (data.delay > 0)
             {
@@ -357,6 +353,11 @@ public class MotionWIP : EditorWindow
         }
         else
         {
+            if ((data.animation == "TransitionFromPosition" || data.animation == "TransitionToPosition") && data.vector != Vector2.zero)
+            {
+                parameters += $", new Vector2({data.vector.x}, {data.vector.y})";
+            }
+
             if (data.duration > 0)
             {
                 parameters += $", duration: {data.duration}f";
@@ -368,15 +369,15 @@ public class MotionWIP : EditorWindow
             }
         }
 
-        if (data.animation == _transitionText && data.offset != 0)
+        if (data.animation.StartsWith(AnimationData._transitionText) && data.animation != "TransitionFromPosition" && data.animation != "TransitionToPosition" && data.offset != 0)
         {
             parameters += $", offset: {data.offset}f";
         }
-        else if (data.animation == _rotateText && data.degrees != 0)
+        else if (data.animation == AnimationData._rotateText && data.degrees != 0)
         {
             parameters += $", degrees: {data.degrees}f";
         }
-        else if (data.animation == _scaleText && data.multiplier != 0)
+        else if (data.animation.StartsWith(AnimationData._scaleText) && data.multiplier != 0)
         {
             parameters += $", multiplier: {data.multiplier}f";
         }
@@ -396,7 +397,7 @@ public class MotionWIP : EditorWindow
                 s += labels[i];
 
                 if (i == 2) { s += "{"; }
-                else if (i == 3){ s += "}"; }
+                else if (i == 3){ s += "}\n"; }
                 else if (i == 4){ s += "{"; }
                 
                 s += "\n";
@@ -410,95 +411,5 @@ public class MotionWIP : EditorWindow
         EditorGUILayout.EndVertical();
     }
 
-    // -------------------------------------------------------------- DATA GETTERS --------------------------------------------------------------
-
-    private AnimationData GetAnimationData(RectTransform rect)
-    {
-        GameObject panel = rect.transform.parent.gameObject;
-        if (!_panelDataMap.ContainsKey(panel))
-        {
-            InitializePanelData(panel);
-        }
-
-        int typeIndex = -1;
-        if (rect.GetComponent<TextMeshProUGUI>())
-        {
-            typeIndex = _textIndex;
-        }
-        else if (rect.GetComponent<Button>())
-        {
-            typeIndex = _buttonIndex;
-        }
-        else if (rect.GetComponent<Image>())
-        {
-            typeIndex = _imageIndex;
-        }
-
-        if (typeIndex != -1)
-        {
-            if (!_panelDataMap[panel][typeIndex].ContainsKey(rect))
-            {
-                _panelDataMap[panel][typeIndex][rect] = new AnimationData();
-            }
-
-            return _panelDataMap[panel][typeIndex][rect];
-        }
-
-        return null;
-    }
-
-    private (AnimationData data, int index, string type) GetTupleAnimationData(RectTransform rect)
-    {
-        GameObject panel = rect.transform.parent.gameObject;
-        if (!_panelDataMap.ContainsKey(panel))
-        {
-            InitializePanelData(panel);
-        }
-
-        string type = string.Empty;
-        int typeIndex = -1;
-
-        if (rect.GetComponent<TextMeshProUGUI>())
-        {
-            type = "Motion.AnimationTarget.Text";
-            typeIndex = _textIndex;
-        }
-        else if (rect.GetComponent<Button>())
-        {
-            type = "Motion.AnimationTarget.Button";
-            typeIndex = _buttonIndex;
-        }
-        else if (rect.GetComponent<Image>())
-        {
-            type = "Motion.AnimationTarget.Image";
-            typeIndex = _imageIndex;
-        }
-
-        if (typeIndex != -1)
-        {
-            if (!_panelDataMap[panel][typeIndex].ContainsKey(rect))
-            {
-                _panelDataMap[panel][typeIndex][rect] = new AnimationData();
-            }
-
-            int index = _panelDataMap[panel][typeIndex].Keys.ToList().IndexOf(rect) + 1;
-            return (_panelDataMap[panel][typeIndex][rect], index, type);
-        }
-
-        return (null, 0, string.Empty);
-    }
-
 
 }
-
-[System.Serializable]
-public class AnimationData
-{
-    public string animation = "Animation";
-    public float duration = 0f;
-    public float delay = 0f;
-    public float offset = 0f;
-    public float degrees = 0f;
-    public float multiplier = 0f;
-}
-
