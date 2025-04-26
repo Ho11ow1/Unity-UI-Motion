@@ -19,15 +19,15 @@ public class MotionWIP : EditorWindow
     private readonly GUIStyle _componentStyle = new GUIStyle();
     private readonly GUIStyle _childrenStyle = new GUIStyle();
     // Colour variables
-    private Color _btnColour = new Color32(255, 255, 255, 255);
-    private Color _inactiveColour = new Color32(255, 51, 89, 255);
+    private Color _activeColour = new Color32(114, 144, 223, 255);     // Lighter blue 
+    private Color _inactiveColour = new Color32(255, 105, 130, 255); // Pinkish red for inactive objects
     // Size variables
     private readonly GUILayoutOption _labelWidth = GUILayout.Width(52);
     private readonly GUILayoutOption _inputWidth = GUILayout.Width(30);
     private readonly GUILayoutOption _vectorWidth = GUILayout.Width(100);
     private const int _selectWidth = 55;
     private const int _childIndent = 15;
-    private const int _dropdownWidth = 96;
+    private const int _dropdownWidth = 148;
 
     // Conveluted KeyValuePair finally works
     private readonly Dictionary<GameObject, Dictionary<int, Dictionary<RectTransform, AnimationData>>> _panelDataMap = 
@@ -92,10 +92,12 @@ public class MotionWIP : EditorWindow
                 }
                 else
                 {
+                    GUI.backgroundColor = _activeColour;
                     EditorGUILayout.ObjectField(obj, typeof(GameObject), true);
                 }
 
-                GUI.backgroundColor = _btnColour;
+                GUI.backgroundColor = _activeColour;
+                if (!obj.activeInHierarchy) { GUI.backgroundColor = _inactiveColour; }
                 if (GUILayout.Button("Find", GUILayout.Width(_selectWidth)))
                 {
                     Selection.activeGameObject = obj;
@@ -174,7 +176,8 @@ public class MotionWIP : EditorWindow
                 EditorGUILayout.ObjectField(rect.gameObject, typeof(GameObject), true);
             }
 
-            GUI.backgroundColor = _btnColour;
+            GUI.backgroundColor = _activeColour;
+            if (!rect.parent.gameObject.activeInHierarchy) { GUI.backgroundColor = _inactiveColour; }
             if (GUILayout.Button("Code", GUILayout.Width(_selectWidth)))
             {
                 _selectedForCodeGen = (_selectedForCodeGen == rect) ? null : rect;
@@ -287,9 +290,6 @@ public class MotionWIP : EditorWindow
         {
             AnimationData data = AnimationData.GetAnimationData(rect, _panelDataMap);
             data.animation = animation;
-            //Debug.Log("Selected animation: " + animation + "\n" +
-            //          "Object: " + rect.gameObject.name +
-            //          (rect.gameObject.transform.parent != null ? " Parent: " + rect.gameObject.transform.parent.gameObject.name : ""));
 
             Repaint();
         }
@@ -307,6 +307,7 @@ public class MotionWIP : EditorWindow
 
         string animationString = AnimationData.GetAnimationString(data);
 
+        GUI.backgroundColor = Color.black;
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         float codeWidth = 650f;
         string[] labels = 
@@ -388,23 +389,22 @@ public class MotionWIP : EditorWindow
         EditorGUILayout.LabelField("}", GUILayout.Width(codeWidth));
         EditorGUILayout.Space(5);
 
+        GUI.backgroundColor = Color.white;
         if (GUILayout.Button("Copy to Clipboard", GUILayout.Width(150)))
         {
-            string code = $"animator.{animationString}({parameters});";
-            string s = "";
+            var code = "";
             for (int i = 0; i < labels.Length; i++)
             {
-                s += labels[i];
+                code += labels[i];
 
-                if (i == 2) { s += "{"; }
-                else if (i == 3){ s += "}\n"; }
-                else if (i == 4){ s += "{"; }
-                
-                s += "\n";
+                if (i == 2 || i == 4) { code += "{"; }
+                else if (i == 3) { code += "}\n"; }
+
+                code += "\n";
             }
-            s += code + "\n" + "}\n\n";
-            EditorGUIUtility.systemCopyBuffer = s;
+            code += $"animator.{animationString}({parameters});\n}}";
 
+            EditorGUIUtility.systemCopyBuffer = code;
             Debug.Log("Code copied to clipboard!");
         }
 
