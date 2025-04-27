@@ -10,7 +10,7 @@ using UnityEngine.Events;
  * 
  * Applies a typewriter effect to a TextMeshProUGUI component
  * 
- * Version: 2.2.1
+ * Version: 2.3.1
  * GitHub: https://github.com/Hollow1/Unity-UI-Motion
  * -------------------------------------------------------- */
 

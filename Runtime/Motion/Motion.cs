@@ -12,7 +12,7 @@ using TMPro;
  * A base class for UI animation components providing
  * common functionality for internal classes.
  * 
- * Version: 2.2.1
+ * Version: 2.3.1
  * GitHub: https://github.com/Hollow1/Unity-UI-Motion
  * -------------------------------------------------------- */
 
@@ -51,8 +51,8 @@ public class Motion : MonoBehaviour
     // Class variables
     private Fade fadeComponent;
     private Transition transitionComponent;
-    private Scale scalingComponent;
     private Rotate rotationComponent;
+    private Scale scalingComponent;
     private TypeWrite typeWriterComponent;
 
     // Component variables
@@ -99,8 +99,8 @@ public class Motion : MonoBehaviour
 
         fadeComponent = new Fade(_texts, _images, _buttons, _cg, this);
         transitionComponent = new Transition(_texts, _images, _buttons, _panel, this);
-        scalingComponent = new Scale(_texts, _images, _buttons, _panel, this);
         rotationComponent = new Rotate(_texts, _images, _buttons, _panel, this);
+        scalingComponent = new Scale(_texts, _images, _buttons, _panel, this);
         typeWriterComponent = new TypeWrite(_texts, this);
     }
 
