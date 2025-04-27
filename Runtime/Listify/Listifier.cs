@@ -13,7 +13,7 @@ using TMPro;
  * with a background image, title and description
  * (description is only visible on hover)
  * 
- * Version: 2.2.1
+ * Version: 2.3.1
  * GitHub: https://github.com/Hollow1/Unity-UI-Motion
  * -------------------------------------------------------- */
 

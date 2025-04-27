@@ -4,10 +4,21 @@ using UnityEngine;
 using UnityEditor;
 using TMPro;
 
+/* --------------------------------------------------------
+ * Unity UI Motion - Editor window component
+ * Created by Hollow1
+ * 
+ * A window aimed to help users with code for their,
+ * Animations together with easy code copy functionality.
+ * 
+ * Version: 2.3.1
+ * GitHub: https://github.com/Hollow1/Unity-UI-Motion
+ * -------------------------------------------------------- */
+
 #pragma warning disable IDE0090 // Use 'new(...)'
-public class MotionWIP : EditorWindow
+public class MotionWindow : EditorWindow
 {
-    private static MotionWIP window;
+    private static MotionWindow window;
     // Motion variables
     private readonly List<GameObject> _motionList = new List<GameObject>();
     private Vector2 _scrollView;
@@ -33,10 +44,10 @@ public class MotionWIP : EditorWindow
     internal const int _imageIndex = 1;
     internal const int _buttonIndex = 2;
 
-    [MenuItem("Window/Motion/Motion WIP")]
+    [MenuItem("Window/Motion/Motion Helper")]
     public static void ShowWindow()
     {
-        window = GetWindow<MotionWIP>("Motion WIP");
+        window = GetWindow<MotionWindow>("Motion Helper");
         window.position = new Rect(550, 250, 700, 550);
         window.Show();
     }

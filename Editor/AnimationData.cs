@@ -5,6 +5,17 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+/* --------------------------------------------------------
+ * Unity UI Motion - AnimationData library
+ * Created by Hollow1
+ * 
+ * Provides AnimationData along with helper functions for
+ * code generation
+ * 
+ * Version: 2.3.1
+ * GitHub: https://github.com/Hollow1/Unity-UI-Motion
+ * -------------------------------------------------------- */
+
 [System.Serializable]
 internal class AnimationData
 {
@@ -31,9 +42,9 @@ internal class AnimationData
         {
             panelDataMap[panel] = new Dictionary<int, Dictionary<RectTransform, AnimationData>>
             {
-                { MotionWIP._textIndex, new Dictionary<RectTransform, AnimationData>() },
-                { MotionWIP._imageIndex, new Dictionary<RectTransform, AnimationData>() },
-                { MotionWIP._buttonIndex, new Dictionary<RectTransform, AnimationData>() }
+                { MotionWindow._textIndex, new Dictionary<RectTransform, AnimationData>() },
+                { MotionWindow._imageIndex, new Dictionary<RectTransform, AnimationData>() },
+                { MotionWindow._buttonIndex, new Dictionary<RectTransform, AnimationData>() }
             };
         }
     }
@@ -51,15 +62,15 @@ internal class AnimationData
         int typeIndex = -1;
         if (rect.GetComponent<TextMeshProUGUI>())
         {
-            typeIndex = MotionWIP._textIndex;
+            typeIndex = MotionWindow._textIndex;
         }
         else if (rect.GetComponent<Button>())
         {
-            typeIndex = MotionWIP._buttonIndex;
+            typeIndex = MotionWindow._buttonIndex;
         }
         else if (rect.GetComponent<Image>())
         {
-            typeIndex = MotionWIP._imageIndex;
+            typeIndex = MotionWindow._imageIndex;
         }
 
         if (typeIndex != -1)
@@ -89,17 +100,17 @@ internal class AnimationData
         if (rect.GetComponent<TextMeshProUGUI>())
         {
             type = "Motion.AnimationTarget.Text";
-            typeIndex = MotionWIP._textIndex;
+            typeIndex = MotionWindow._textIndex;
         }
         else if (rect.GetComponent<Button>())
         {
             type = "Motion.AnimationTarget.Button";
-            typeIndex = MotionWIP._buttonIndex;
+            typeIndex = MotionWindow._buttonIndex;
         }
         else if (rect.GetComponent<Image>())
         {
             type = "Motion.AnimationTarget.Image";
-            typeIndex = MotionWIP._imageIndex;
+            typeIndex = MotionWindow._imageIndex;
         }
 
         if (typeIndex != -1)
