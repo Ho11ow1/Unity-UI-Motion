@@ -11,15 +11,13 @@ public class MotionWIP : EditorWindow
     // Motion variables
     private readonly List<GameObject> _motionList = new List<GameObject>();
     private Vector2 _scrollView;
-
     // Track which object is selected for code generation
     private RectTransform _selectedForCodeGen = null;
-
     // Styling variables
     private readonly GUIStyle _componentStyle = new GUIStyle();
     private readonly GUIStyle _childrenStyle = new GUIStyle();
     // Colour variables
-    private Color _activeColour = new Color32(114, 144, 223, 255);     // Lighter blue 
+    private Color _activeColour = new Color32(114, 144, 223, 255); // Lighter blue 
     private Color _inactiveColour = new Color32(255, 105, 130, 255); // Pinkish red for inactive objects
     // Size variables
     private readonly GUILayoutOption _labelWidth = GUILayout.Width(52);
@@ -28,7 +26,6 @@ public class MotionWIP : EditorWindow
     private const int _selectWidth = 55;
     private const int _childIndent = 15;
     private const int _dropdownWidth = 148;
-
     // Conveluted KeyValuePair finally works
     private readonly Dictionary<GameObject, Dictionary<int, Dictionary<RectTransform, AnimationData>>> _panelDataMap = 
                 new Dictionary<GameObject, Dictionary<int, Dictionary<RectTransform, AnimationData>>>();
@@ -313,9 +310,10 @@ public class MotionWIP : EditorWindow
         string[] labels = 
         { 
             "[SerializeField] private GameObject panel;", 
-            "private Motion animator;\n", 
+            "private Motion panelMotion;\n", 
             "void Awake()", 
-            "    animator = panel.GetComponent<Motion>();", "private void PlayAnimation()" 
+            "    panelMotion = panel.GetComponent<Motion>();", 
+            "private void PlayAnimation()",
         };
 
         EditorGUILayout.LabelField("// Generated Code", EditorStyles.boldLabel);
@@ -385,25 +383,15 @@ public class MotionWIP : EditorWindow
 
         GUIStyle codeStyle = new GUIStyle(EditorStyles.label) { fontStyle = FontStyle.Bold };
 
-        EditorGUILayout.LabelField($"    animator.{animationString}({parameters});", codeStyle, GUILayout.Width(codeWidth));
+        EditorGUILayout.LabelField($"    panelMotion.{animationString}({parameters});", codeStyle, GUILayout.Width(codeWidth));
         EditorGUILayout.LabelField("}", GUILayout.Width(codeWidth));
         EditorGUILayout.Space(5);
 
         GUI.backgroundColor = Color.white;
         if (GUILayout.Button("Copy to Clipboard", GUILayout.Width(150)))
         {
-            var code = "";
-            for (int i = 0; i < labels.Length; i++)
-            {
-                code += labels[i];
-
-                if (i == 2 || i == 4) { code += "{"; }
-                else if (i == 3) { code += "}\n"; }
-
-                code += "\n";
-            }
-            code += $"animator.{animationString}({parameters});\n}}";
-
+            var code = $"panelMotion.{animationString}({parameters});";
+            
             EditorGUIUtility.systemCopyBuffer = code;
             Debug.Log("Code copied to clipboard!");
         }
