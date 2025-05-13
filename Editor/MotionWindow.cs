@@ -349,47 +349,40 @@ public class MotionWindow : EditorWindow
             parameters = $"{occurrence}";
         }
 
-        if (data.animation == AnimationData._typeWriteText)
+        switch (data.animation)
         {
-            if (data.delay > 0)
-            {
-                parameters += $", delay: {data.delay}f";
-            }
+            case AnimationData._typeWriteText:
+                if (data.delay > 0)
+                    parameters += $", delay: {data.delay}f";
+                if (data.duration > 0)
+                    parameters += $", duration: {data.duration}f";
+                break;
 
-            if (data.duration > 0)
-            {
-                parameters += $", duration: {data.duration}f";
-            }
-        }
-        else
-        {
-            if ((data.animation == "TransitionFromPosition" || data.animation == "TransitionToPosition") && data.vector != Vector2.zero)
-            {
-                parameters += $", new Vector2({data.vector.x}, {data.vector.y})";
-            }
+            case "TransitionFromPosition":
+            case "TransitionToPosition":
+                if (data.vector != Vector2.zero)
+                    parameters += $", new Vector2({data.vector.x}, {data.vector.y})";
+                if (data.duration > 0)
+                    parameters += $", duration: {data.duration}f";
+                if (data.delay > 0)
+                    parameters += $", delay: {data.delay}f";
+                break;
 
-            if (data.duration > 0)
-            {
-                parameters += $", duration: {data.duration}f";
-            }
+            default:
+                if (data.duration > 0)
+                    parameters += $", duration: {data.duration}f";
+                if (data.delay > 0)
+                    parameters += $", delay: {data.delay}f";
 
-            if (data.delay > 0)
-            {
-                parameters += $", delay: {data.delay}f";
-            }
-        }
+                if (data.animation.StartsWith(AnimationData._transitionText) && data.offset != 0)
+                    parameters += $", offset: {data.offset}f";
 
-        if (data.animation.StartsWith(AnimationData._transitionText) && data.animation != "TransitionFromPosition" && data.animation != "TransitionToPosition" && data.offset != 0)
-        {
-            parameters += $", offset: {data.offset}f";
-        }
-        else if (data.animation == AnimationData._rotateText && data.degrees != 0)
-        {
-            parameters += $", degrees: {data.degrees}f";
-        }
-        else if (data.animation.StartsWith(AnimationData._scaleText) && data.multiplier != 0)
-        {
-            parameters += $", multiplier: {data.multiplier}f";
+                else if (data.animation == AnimationData._rotateText && data.degrees != 0)
+                    parameters += $", degrees: {data.degrees}f";
+
+                else if (data.animation.StartsWith(AnimationData._scaleText) && data.multiplier != 0)
+                    parameters += $", multiplier: {data.multiplier}f";
+                break;
         }
 
         GUIStyle codeStyle = new GUIStyle(EditorStyles.label) { fontStyle = FontStyle.Bold };
