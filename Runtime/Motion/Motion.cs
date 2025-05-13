@@ -12,7 +12,7 @@ using TMPro;
  * A base class for UI animation components providing
  * common functionality for internal classes.
  * 
- * Version: 2.2.1
+ * Version: 2.3.1
  * GitHub: https://github.com/Hollow1/Unity-UI-Motion
  * -------------------------------------------------------- */
 
@@ -51,8 +51,8 @@ public class Motion : MonoBehaviour
     // Class variables
     private Fade fadeComponent;
     private Transition transitionComponent;
-    private Scale scalingComponent;
     private Rotate rotationComponent;
+    private Scale scalingComponent;
     private TypeWrite typeWriterComponent;
 
     // Component variables
@@ -99,8 +99,8 @@ public class Motion : MonoBehaviour
 
         fadeComponent = new Fade(_texts, _images, _buttons, _cg, this);
         transitionComponent = new Transition(_texts, _images, _buttons, _panel, this);
-        scalingComponent = new Scale(_texts, _images, _buttons, _panel, this);
         rotationComponent = new Rotate(_texts, _images, _buttons, _panel, this);
+        scalingComponent = new Scale(_texts, _images, _buttons, _panel, this);
         typeWriterComponent = new TypeWrite(_texts, this);
     }
 
@@ -345,16 +345,26 @@ public class Motion : MonoBehaviour
     // ----------------------------------------------------- TypeWriter API -----------------------------------------------------
 
     /// <summary>
-    /// Applies a typeWriter effect to the TextMeshPro component with a custom delay and duration
+    /// Applies a typeWriter effect to the TextMeshPro component with a custom delay
     /// </summary>
     /// <param name="occurrence">Specifies the instance of the target element</param>
     /// <param name="delay">Time in seconds for the delay per character</param>
-    /// <param name="duration">Time in seconds for the entire text to animate</param>
-    public void TypeWrite(int occurrence, float delay = 0.3f, float duration = 3f)
+    public void TypeWriteWithDelay(int occurrence, float delay = 0.3f)
     {
         occurrence -= 1;
-        typeWriterComponent.TypeWriter(occurrence, delay, duration, typeWriteStart, typeWriteEnd);
+        typeWriterComponent.TypeWriterDelay(occurrence, delay, typeWriteStart, typeWriteEnd);
     }
 
+    /// <summary>
+    /// Applies a typeWriter effect to the TextMeshPro component with a custom duration
+    /// </summary>
+    /// <param name="occurrence">Specifies the instance of the target element</param>
+    /// <param name="duration">Time in seconds for the entire text to animate</param>
+    public void TypeWriteWithDuration(int occurrence, float duration = 3f)
+    {
+        occurrence -= 1;
+        typeWriterComponent.TypeWriterDuration(occurrence, duration, typeWriteStart, typeWriteEnd);
+    }
 
+    
 }
